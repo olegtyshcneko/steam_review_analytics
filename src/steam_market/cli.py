@@ -339,7 +339,11 @@ def test_llm() -> None:
             classification = await llm.classify_game({"name": "Fixture Factory", "short_description": "Build conveyor belts and automate production.",
                 "genres": [{"description": "Simulation"}], "categories": [{"description": "Single-player"}]},
                 {"Automation": 100, "Base Building": 80}, ["Factory / Automation"], taxonomy)
-            enrichment = await llm.enrich_review("The automation is excellent, but late-game stuttering needs fixing.", False, AspectTaxonomy())
+            enrichment = (await llm.enrich_reviews([(
+                "fixture-review",
+                "The automation is excellent, but late-game stuttering needs fixing.",
+                False,
+            )], AspectTaxonomy()))["fixture-review"]
             return classification, enrichment
         finally:
             await llm.close()

@@ -57,9 +57,52 @@ class ReviewEnrichment(BaseModel):
     confidence: float = Field(ge=0, le=1)
 
 
+class CompactAspect(BaseModel):
+    c: str
+    s: str
+    p: Literal["positive", "mixed", "negative", "neutral"]
+    q: float = Field(ge=0, le=1)
+
+
+class CompactStatement(BaseModel):
+    l: str
+    t: str
+
+
 class ReviewEnrichmentItem(BaseModel):
-    recommendation_id: str
-    enrichment: ReviewEnrichment
+    id: str
+    s: Literal["positive", "mixed", "negative", "neutral"]
+    i: str
+    q: float = Field(ge=0, le=1)
+    pc: list[str] = []
+    a: list[CompactAspect] = []
+    co: list[CompactStatement] = []
+    pr: list[CompactStatement] = []
+    fr: list[CompactStatement] = []
+    ti: list[CompactStatement] = []
+    mo: list[CompactStatement] = []
+    ac: list[CompactStatement] = []
+    mu: list[CompactStatement] = []
+
+    def normalized(self) -> ReviewEnrichment:
+        def statements(values: list[CompactStatement]) -> list[Statement]:
+            return [Statement(label=value.l, statement=value.t) for value in values]
+
+        return ReviewEnrichment(
+            sentiment=self.s,
+            review_intent=self.i,
+            confidence=self.q,
+            player_context=self.pc,
+            aspects=[Aspect(category=value.c, subcategory=value.s,
+                            sentiment=value.p, confidence=value.q) for value in self.a],
+            complaints=statements(self.co),
+            praises=statements(self.pr),
+            feature_requests=statements(self.fr),
+            technical_issues=statements(self.ti),
+            monetization_comments=statements(self.mo),
+            accessibility_comments=statements(self.ac),
+            multiplayer_comments=statements(self.mu),
+        )
 
 
 class ReviewEnrichmentBatch(BaseModel):

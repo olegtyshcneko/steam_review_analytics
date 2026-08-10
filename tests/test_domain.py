@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from steam_market.domain import Aspect, GameClassification, enrichment_eligibility, review_band
+from steam_market.domain import Aspect, GameClassification, ReviewEnrichmentItem, enrichment_eligibility, review_band
 from steam_market.taxonomy import AspectTaxonomy, Taxonomy, deterministic_candidates
 from steam_market.config import Settings
 
@@ -51,3 +51,15 @@ def test_aspect_taxonomy_and_confidence_validation():
     assert not AspectTaxonomy().validate("technical", "enemy_variety")
     with pytest.raises(ValidationError):
         Aspect(category="technical", subcategory="bugs", sentiment="negative", confidence=2)
+
+
+def test_compact_enrichment_normalizes_to_full_model():
+    item = ReviewEnrichmentItem.model_validate({
+        "id": "123", "s": "mixed", "i": "critique", "q": .9,
+        "a": [{"c": "technical", "s": "performance", "p": "negative", "q": .8}],
+        "co": [{"l": "performance", "t": "Frame rate drops."}],
+    })
+    result = item.normalized()
+    assert result.sentiment == "mixed"
+    assert result.aspects[0].subcategory == "performance"
+    assert result.complaints[0].statement == "Frame rate drops."

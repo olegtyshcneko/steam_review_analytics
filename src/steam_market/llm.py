@@ -104,17 +104,24 @@ class LLMClient:
             "reviews": [{"recommendation_id": rec_id, "review_text": text, "source_voted_up": voted_up}
                         for rec_id, text, voted_up in reviews],
             "allowed_aspects": {key: sorted(value) for key, value in aspects.categories.items()},
-            "batch_rule": "Return exactly one item for every supplied recommendation_id, in the same order.",
+            "batch_rule": "Return exactly one compact item for every supplied recommendation_id, in the same order.",
+            "compact_field_legend": {
+                "id": "recommendation_id", "s": "sentiment", "i": "review_intent", "q": "confidence",
+                "pc": "player_context", "a": "aspects", "co": "complaints", "pr": "praises",
+                "fr": "feature_requests", "ti": "technical_issues", "mo": "monetization_comments",
+                "ac": "accessibility_comments", "mu": "multiplayer_comments",
+                "aspect": {"c": "category", "s": "subcategory", "p": "sentiment", "q": "confidence"},
+                "statement": {"l": "label", "t": "statement"},
+            },
         }, ReviewEnrichmentBatch)
-        actual = [item.recommendation_id for item in result.items]
+        actual = [item.id for item in result.items]
         if actual != expected:
             raise ValueError(f"Batch response IDs do not match input: expected {expected}, got {actual}")
         for item in result.items:
-            invalid = [f"{x.category}/{x.subcategory}" for x in item.enrichment.aspects
-                       if not aspects.validate(x.category, x.subcategory)]
+            invalid = [f"{x.c}/{x.s}" for x in item.a if not aspects.validate(x.c, x.s)]
             if invalid:
-                raise ValueError(f"Unknown review aspects for {item.recommendation_id}: {invalid}")
-        return {item.recommendation_id: item.enrichment for item in result.items}
+                raise ValueError(f"Unknown review aspects for {item.id}: {invalid}")
+        return {item.id: item.normalized() for item in result.items}
 
 
 def _extract_json(content: str) -> str:
