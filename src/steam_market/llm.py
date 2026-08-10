@@ -8,7 +8,7 @@ import httpx
 from pydantic import BaseModel, ValidationError
 
 from .config import Settings
-from .domain import GameClassification, ReviewEnrichment
+from .domain import GameClassification, ReviewEnrichment, ReviewEnrichmentBatch
 from .taxonomy import AspectTaxonomy, Taxonomy
 
 
@@ -90,6 +90,27 @@ class LLMClient:
         if invalid:
             raise ValueError(f"Unknown review aspects: {invalid}")
         return result
+
+    async def enrich_reviews(self, reviews: list[tuple[str, str, bool | None]],
+                             aspects: AspectTaxonomy) -> dict[str, ReviewEnrichment]:
+        """Enrich a bounded batch and reject partial/misidentified responses."""
+        system = (ROOT / "prompts" / "review_enrichment_v1.md").read_text()
+        expected = [item[0] for item in reviews]
+        result = await self.structured(system, {
+            "reviews": [{"recommendation_id": rec_id, "review_text": text, "source_voted_up": voted_up}
+                        for rec_id, text, voted_up in reviews],
+            "allowed_aspects": {key: sorted(value) for key, value in aspects.categories.items()},
+            "batch_rule": "Return exactly one item for every supplied recommendation_id, in the same order.",
+        }, ReviewEnrichmentBatch)
+        actual = [item.recommendation_id for item in result.items]
+        if actual != expected:
+            raise ValueError(f"Batch response IDs do not match input: expected {expected}, got {actual}")
+        for item in result.items:
+            invalid = [f"{x.category}/{x.subcategory}" for x in item.enrichment.aspects
+                       if not aspects.validate(x.category, x.subcategory)]
+            if invalid:
+                raise ValueError(f"Unknown review aspects for {item.recommendation_id}: {invalid}")
+        return {item.recommendation_id: item.enrichment for item in result.items}
 
 
 def _extract_json(content: str) -> str:

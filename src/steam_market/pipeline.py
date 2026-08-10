@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import asyncio
 import json
 import random
 from dataclasses import dataclass, field
@@ -123,29 +124,59 @@ class Pipeline:
         return stored
 
     async def enrich_pending(self, appid: int, run_id: str | None = None) -> tuple[int, int]:
-        rows = self.db.con.execute("""
-          SELECT r.recommendation_id,r.review_text,r.language,r.voted_up FROM reviews r
-          LEFT JOIN review_enrichment e ON r.recommendation_id=e.recommendation_id AND e.enrichment_version=?
-          WHERE r.appid=? AND e.recommendation_id IS NULL ORDER BY r.recommendation_id
-        """, [self.settings.enrichment_version, appid]).fetchall()
         enriched = skipped = 0
-        for recommendation_id, text, language, voted_up in rows:
-            eligible, status = enrichment_eligibility(text, language or "", self.settings)
-            if not eligible:
-                self.db.save_enrichment(recommendation_id, appid, None, self.settings.enrichment_version,
-                                        self.settings.llm_model, status)
-                skipped += 1
-                continue
+        processed = 0
+
+        async def enrich_batch(batch: list[tuple[str, str, bool | None]]) -> tuple[int, int]:
             try:
-                result = await self.llm.enrich_review(text, voted_up, self.aspects)
-                self.db.save_enrichment(recommendation_id, appid, result, self.settings.enrichment_version,
-                                        self.settings.llm_model, "completed")
-                enriched += 1
+                results = await self.llm.enrich_reviews(batch, self.aspects)
+                for recommendation_id, result in results.items():
+                    self.db.save_enrichment(recommendation_id, appid, result, self.settings.enrichment_version,
+                                            self.settings.llm_model, "completed")
+                return len(results), 0
             except Exception as exc:
-                self.db.save_enrichment(recommendation_id, appid, None, self.settings.enrichment_version,
-                                        self.settings.llm_model, "error", str(exc)[:2000])
-                self.db.record_error(run_id, "llm", "review_enrichment", str(exc), appid, recommendation_id,
-                                     retry_count=self.settings.llm_max_retries)
+                for recommendation_id, _, _ in batch:
+                    self.db.save_enrichment(recommendation_id, appid, None, self.settings.enrichment_version,
+                                            self.settings.llm_model, "error", str(exc)[:2000])
+                    self.db.record_error(run_id, "llm", "review_enrichment", str(exc), appid, recommendation_id,
+                                         retry_count=self.settings.llm_max_retries)
+                return 0, len(batch)
+
+        while True:
+            rows = self.db.con.execute("""
+              SELECT r.recommendation_id,r.review_text,r.language,r.voted_up FROM reviews r
+              LEFT JOIN review_enrichment e ON r.recommendation_id=e.recommendation_id AND e.enrichment_version=?
+              WHERE r.appid=? AND e.recommendation_id IS NULL ORDER BY r.recommendation_id LIMIT 200
+            """, [self.settings.enrichment_version, appid]).fetchall()
+            if not rows:
+                break
+            eligible_rows: list[tuple[str, str, bool | None]] = []
+            for recommendation_id, review_text, language, voted_up in rows:
+                eligible, status = enrichment_eligibility(review_text, language or "", self.settings)
+                if not eligible:
+                    self.db.save_enrichment(recommendation_id, appid, None, self.settings.enrichment_version,
+                                            self.settings.llm_model, status)
+                    skipped += 1
+                else:
+                    eligible_rows.append((recommendation_id, review_text, voted_up))
+            batches: list[list[tuple[str, str, bool | None]]] = []
+            current: list[tuple[str, str, bool | None]] = []
+            chars = 0
+            for item in eligible_rows:
+                item_chars = len(item[1])
+                if current and (len(current) >= self.settings.llm_batch_size or
+                                chars + item_chars > self.settings.llm_batch_max_characters):
+                    batches.append(current)
+                    current, chars = [], 0
+                current.append(item)
+                chars += item_chars
+            if current:
+                batches.append(current)
+            for offset in range(0, len(batches), self.settings.llm_concurrency):
+                results = await asyncio.gather(*(enrich_batch(batch) for batch in batches[offset:offset + self.settings.llm_concurrency]))
+                enriched += sum(item[0] for item in results)
+            processed += len(rows)
+            console.print(f"  enrichment processed: {processed:,} (completed={enriched:,}, skipped={skipped:,})")
         return enriched, skipped
 
     async def dry_run(self, games: int, minimum: int, seed: int) -> tuple[str, RunStats, dict]:

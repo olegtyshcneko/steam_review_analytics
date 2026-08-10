@@ -57,6 +57,15 @@ class ReviewEnrichment(BaseModel):
     confidence: float = Field(ge=0, le=1)
 
 
+class ReviewEnrichmentItem(BaseModel):
+    recommendation_id: str
+    enrichment: ReviewEnrichment
+
+
+class ReviewEnrichmentBatch(BaseModel):
+    items: list[ReviewEnrichmentItem]
+
+
 class GameClassification(BaseModel):
     primary_genre: str
     secondary_genres: list[str] = []

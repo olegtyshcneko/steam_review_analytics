@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from steam_market.domain import ReviewPage, ReviewSummary
+from steam_market.domain import Aspect, ReviewEnrichment, ReviewPage, ReviewSummary
 from steam_market.pipeline import Pipeline
 
 
@@ -68,3 +68,34 @@ async def test_resume_starts_at_saved_cursor(settings, db):
         assert fake.cursors == ["resume"]
     finally:
         await pipeline.store.close(); await pipeline.spy.close(); await pipeline.llm.close()
+
+
+class FakeLLM:
+    def __init__(self):
+        self.batch_sizes = []
+
+    async def enrich_reviews(self, rows, aspects):
+        self.batch_sizes.append(len(rows))
+        return {rec_id: ReviewEnrichment(sentiment="positive", review_intent="praise", confidence=.9,
+                aspects=[Aspect(category="gameplay", subcategory="core_loop", sentiment="positive", confidence=.9)])
+                for rec_id, _, _ in rows}
+
+
+@pytest.mark.asyncio
+async def test_enrichment_is_bounded_and_batched(settings, db):
+    settings.llm_batch_size = 3
+    settings.llm_batch_max_characters = 10_000
+    settings.llm_concurrency = 2
+    db.upsert_catalog_game(10, "Game")
+    db.upsert_reviews(10, [review(str(number)) for number in range(10)], lambda value: value)
+    pipeline = Pipeline(settings, db)
+    await pipeline.llm.close()
+    fake = FakeLLM()
+    pipeline.llm = fake
+    try:
+        enriched, skipped = await pipeline.enrich_pending(10)
+        assert (enriched, skipped) == (10, 0)
+        assert fake.batch_sizes == [3, 3, 3, 1]
+        assert db.con.execute("SELECT count(*) FROM review_enrichment").fetchone()[0] == 10
+    finally:
+        await pipeline.reviews.close(); await pipeline.store.close(); await pipeline.spy.close()

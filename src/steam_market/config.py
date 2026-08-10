@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     llm_temperature: float = Field(0.1, ge=0, le=2)
     llm_timeout_seconds: float = Field(180, gt=0)
     llm_concurrency: int = Field(1, ge=1)
+    llm_batch_size: int = Field(8, ge=1, le=32)
+    llm_batch_max_characters: int = Field(12000, ge=1000, le=50000)
     enrich_languages: Annotated[list[str], NoDecode] = ["english"]
     enrich_min_characters: int = Field(40, ge=1)
     enrichment_version: str = "v1"
