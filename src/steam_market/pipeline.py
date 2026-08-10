@@ -126,6 +126,7 @@ class Pipeline:
     async def enrich_pending(self, appid: int, run_id: str | None = None) -> tuple[int, int]:
         enriched = skipped = 0
         processed = 0
+        retry_before = datetime.now()
 
         async def enrich_batch(batch: list[tuple[str, str, bool | None]]) -> tuple[int, int]:
             try:
@@ -135,19 +136,30 @@ class Pipeline:
                                             self.settings.llm_model, "completed")
                 return len(results), 0
             except Exception as exc:
-                for recommendation_id, _, _ in batch:
-                    self.db.save_enrichment(recommendation_id, appid, None, self.settings.enrichment_version,
-                                            self.settings.llm_model, "error", str(exc)[:2000])
-                    self.db.record_error(run_id, "llm", "review_enrichment", str(exc), appid, recommendation_id,
-                                         retry_count=self.settings.llm_max_retries)
-                return 0, len(batch)
+                recovered = failed = 0
+                for recommendation_id, review_text, voted_up in batch:
+                    try:
+                        result = await self.llm.enrich_review(review_text, voted_up, self.aspects)
+                        self.db.save_enrichment(recommendation_id, appid, result, self.settings.enrichment_version,
+                                                self.settings.llm_model, "completed")
+                        recovered += 1
+                    except Exception as item_exc:
+                        self.db.save_enrichment(recommendation_id, appid, None, self.settings.enrichment_version,
+                                                self.settings.llm_model, "error", str(item_exc)[:2000])
+                        self.db.record_error(run_id, "llm", "review_enrichment", str(item_exc), appid,
+                                             recommendation_id, retry_count=self.settings.llm_max_retries,
+                                             payload={"batch_error": str(exc)[:1000]})
+                        failed += 1
+                return recovered, failed
 
         while True:
             rows = self.db.con.execute("""
               SELECT r.recommendation_id,r.review_text,r.language,r.voted_up FROM reviews r
               LEFT JOIN review_enrichment e ON r.recommendation_id=e.recommendation_id AND e.enrichment_version=?
-              WHERE r.appid=? AND e.recommendation_id IS NULL ORDER BY r.recommendation_id LIMIT 200
-            """, [self.settings.enrichment_version, appid]).fetchall()
+              WHERE r.appid=? AND (e.recommendation_id IS NULL OR
+                    (e.enrichment_status='error' AND e.enriched_at < ?))
+              ORDER BY r.recommendation_id LIMIT 200
+            """, [self.settings.enrichment_version, appid, retry_before]).fetchall()
             if not rows:
                 break
             eligible_rows: list[tuple[str, str, bool | None]] = []

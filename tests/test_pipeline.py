@@ -80,6 +80,9 @@ class FakeLLM:
                 aspects=[Aspect(category="gameplay", subcategory="core_loop", sentiment="positive", confidence=.9)])
                 for rec_id, _, _ in rows}
 
+    async def enrich_review(self, text, voted_up, aspects):
+        return ReviewEnrichment(sentiment="positive", review_intent="praise", confidence=.9)
+
 
 @pytest.mark.asyncio
 async def test_enrichment_is_bounded_and_batched(settings, db):
@@ -97,5 +100,25 @@ async def test_enrichment_is_bounded_and_batched(settings, db):
         assert (enriched, skipped) == (10, 0)
         assert fake.batch_sizes == [3, 3, 3, 1]
         assert db.con.execute("SELECT count(*) FROM review_enrichment").fetchone()[0] == 10
+    finally:
+        await pipeline.reviews.close(); await pipeline.store.close(); await pipeline.spy.close()
+
+
+@pytest.mark.asyncio
+async def test_invalid_batch_falls_back_per_review(settings, db):
+    settings.llm_batch_size = 3
+    db.upsert_catalog_game(10, "Game")
+    db.upsert_reviews(10, [review(str(number)) for number in range(3)], lambda value: value)
+    pipeline = Pipeline(settings, db)
+    await pipeline.llm.close()
+
+    class BrokenBatch(FakeLLM):
+        async def enrich_reviews(self, rows, aspects):
+            raise ValueError("bad batch")
+
+    pipeline.llm = BrokenBatch()
+    try:
+        assert await pipeline.enrich_pending(10) == (3, 0)
+        assert db.con.execute("SELECT count(*) FROM review_enrichment WHERE enrichment_status='completed'").fetchone()[0] == 3
     finally:
         await pipeline.reviews.close(); await pipeline.store.close(); await pipeline.spy.close()
