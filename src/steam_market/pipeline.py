@@ -214,6 +214,7 @@ class Pipeline:
                 enriched, skipped = await self.enrich_pending(appid, run_id)
                 stats.reviews_enriched += enriched
                 stats.skipped_reviews += skipped
+            self._refresh_durable_stats(stats, [appid for appid, _, _, _ in selected])
             validation = validate_database(self.db, self.taxonomy, self.aspects)
             if not validation["passed"]:
                 raise RuntimeError("Validation failed: " + "; ".join(validation["errors"]))
@@ -226,6 +227,24 @@ class Pipeline:
             stats.error_count += 1
             self.db.finish_run(run_id, "failed", stats.db_fields())
             raise
+
+    def _refresh_durable_stats(self, stats: RunStats, appids: list[int]) -> None:
+        """Report durable totals, not invocation work, after a resumed run."""
+        if not appids:
+            return
+        placeholders = ",".join("?" for _ in appids)
+        stats.reviews_ingested = self.db.con.execute(
+            f"SELECT count(*) FROM reviews WHERE appid IN ({placeholders})", appids
+        ).fetchone()[0]
+        rows = self.db.con.execute(f"""
+          SELECT e.enrichment_status,count(*) FROM review_enrichment e
+          JOIN reviews r USING(recommendation_id)
+          WHERE r.appid IN ({placeholders}) AND e.enrichment_version=? GROUP BY 1
+        """, [*appids, self.settings.enrichment_version]).fetchall()
+        statuses = dict(rows)
+        stats.reviews_enriched = statuses.get("completed", 0)
+        stats.skipped_reviews = statuses.get("skipped_language", 0) + statuses.get("skipped_low_information", 0)
+        stats.error_count = max(stats.error_count, statuses.get("error", 0))
 
     async def production_run(self, minimum: int, limit_games: int | None = None,
                              appid: int | None = None, skip_llm: bool = False,
@@ -308,6 +327,7 @@ class Pipeline:
                     stats.error_count += 1
                     self.db.record_error(run_id, "pipeline", "game_ingestion", str(exc), game_id)
                     console.print(f"[red]{game_id} failed: {exc}[/red]")
+            self._refresh_durable_stats(stats, [game_id for game_id, _, _, _ in selected])
             validation = validate_database(self.db, self.taxonomy, self.aspects)
             status = "completed" if validation["passed"] else "failed"
             self.db.finish_run(run_id, status, stats.db_fields())

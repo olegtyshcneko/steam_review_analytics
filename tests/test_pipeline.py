@@ -122,3 +122,20 @@ async def test_invalid_batch_falls_back_per_review(settings, db):
         assert db.con.execute("SELECT count(*) FROM review_enrichment WHERE enrichment_status='completed'").fetchone()[0] == 3
     finally:
         await pipeline.reviews.close(); await pipeline.store.close(); await pipeline.spy.close()
+
+
+def test_durable_stats_include_prior_resumed_work(settings, db):
+    from steam_market.domain import Statement
+    from steam_market.pipeline import RunStats
+
+    db.upsert_catalog_game(10, "Game")
+    db.upsert_reviews(10, [review("1"), review("2"), review("3")], lambda value: value)
+    completed = ReviewEnrichment(sentiment="positive", review_intent="praise", confidence=.9,
+                                 praises=[Statement(label="core_loop", statement="Good")])
+    db.save_enrichment("1", 10, completed, "v1", "fixture", "completed")
+    db.save_enrichment("2", 10, None, "v1", "fixture", "skipped_language")
+    db.save_enrichment("3", 10, None, "v1", "fixture", "error", "fixture")
+    pipeline = Pipeline(settings, db)
+    stats = RunStats(reviews_ingested=99, reviews_enriched=99, skipped_reviews=99)
+    pipeline._refresh_durable_stats(stats, [10])
+    assert (stats.reviews_ingested, stats.reviews_enriched, stats.skipped_reviews, stats.error_count) == (3, 1, 1, 1)

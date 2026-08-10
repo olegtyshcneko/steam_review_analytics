@@ -222,7 +222,7 @@ def dry_run(
     console.print(f"Run ID: {run_id}")
     console.print("Selected games: " + ", ".join(f"{name} ({appid})" for appid, name in stats.selected))
     console.print(f"Reviews expected: {stats.expected_reviews:,}")
-    console.print(f"Review rows processed: {stats.reviews_ingested:,}")
+    console.print(f"Reviews stored: {stats.reviews_ingested:,}")
     console.print(f"Reviews enriched: {stats.reviews_enriched:,}")
     console.print(f"Skipped reviews: {stats.skipped_reviews:,}")
     console.print(f"Classification: {result['classifications']}")
