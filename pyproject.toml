@@ -1,0 +1,32 @@
+[project]
+name = "steam-review-analytics"
+version = "0.1.0"
+description = "Local-first Steam review market dataset builder"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "duckdb>=1.4.0",
+  "httpx>=0.28.0",
+  "pydantic>=2.11.0",
+  "pydantic-settings>=2.10.0",
+  "pyyaml>=6.0.2",
+  "rich>=14.0.0",
+  "typer>=0.16.0",
+]
+
+[project.scripts]
+steam-market = "steam_market.cli:app"
+
+[dependency-groups]
+dev = ["pytest>=8.4.0", "pytest-asyncio>=1.1.0", "respx>=0.22.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/steam_market"]

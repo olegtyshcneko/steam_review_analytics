@@ -1,0 +1,101 @@
+version: v1
+genres:
+  - FPS
+  - Third-person Shooter
+  - Boomer Shooter
+  - Arena Shooter
+  - Tactical Shooter
+  - Extraction Shooter
+  - Looter Shooter
+  - Character Action
+  - Hack and Slash
+  - Beat 'em Up
+  - Fighting
+  - Soulslike
+  - Action Roguelike
+  - Survivors-like / Bullet Heaven
+  - Stealth
+  - Rhythm Action
+  - Action RPG
+  - CRPG
+  - JRPG
+  - Tactical RPG
+  - Turn-based RPG
+  - Dungeon Crawler
+  - Party-based RPG
+  - Monster Taming
+  - RPG Sandbox
+  - RTS
+  - Turn-based Strategy
+  - 4X
+  - Grand Strategy
+  - Auto Battler
+  - Tower Defense
+  - Tactical Strategy
+  - Wargame
+  - Management
+  - Tycoon
+  - City Builder
+  - Colony Sim
+  - Factory / Automation
+  - Farming
+  - Life Sim
+  - Job Simulator
+  - Vehicle Sim
+  - Economy / Trading Sim
+  - Open World Survival Craft
+  - Survival
+  - Sandbox
+  - Base Building
+  - Extraction Survival
+  - Crafting Sandbox
+  - Traditional Roguelike
+  - Roguelite
+  - Roguelike Deckbuilder
+  - Strategy Roguelite
+  - Dungeon Run
+  - Deckbuilder
+  - Digital CCG
+  - Card Battler
+  - Puzzle
+  - Puzzle Adventure
+  - Logic Puzzle
+  - Automation Puzzle
+  - Physics Puzzle
+  - Sokoban-like
+  - Escape Room
+  - 2D Platformer
+  - 3D Platformer
+  - Precision Platformer
+  - Metroidvania
+  - Exploration Adventure
+  - Survival Horror
+  - Psychological Horror
+  - Co-op Horror
+  - Horror Adventure
+  - Mascot Horror
+  - Extraction Horror
+  - Visual Novel
+  - Narrative Adventure
+  - Point & Click
+  - Interactive Fiction
+  - Walking Simulator
+  - Dating Sim
+  - Co-op Adventure
+  - Co-op Survival
+  - Party Game
+  - Social Deduction
+  - Physics Co-op
+  - Idle
+  - Incremental
+  - Idle Management
+  - Clicker
+  - Racing
+  - Sports
+  - Wrestling
+  - Skateboarding
+  - Flight
+  - Space Sim
+  - Music / Rhythm
+  - Education
+  - Experimental

@@ -1,0 +1,9 @@
+version: v1
+categories:
+  gameplay: [core_loop, combat, controls, movement, difficulty, balance, enemy_design, boss_design, build_variety, class_variety, weapon_variety, itemization, progression, meta_progression, crafting, exploration, puzzle_design, level_design, mission_design, replayability, rng, grind, pacing]
+  content: [content_amount, content_variety, enemy_variety, biome_variety, quest_variety, endgame, story_content]
+  presentation: [art_style, graphics, animation, ui, ux, audio, music, voice_acting]
+  narrative: [story, writing, characters, worldbuilding, choices, ending]
+  technical: [performance, crashes, bugs, stuttering, compatibility, loading, networking, servers, save_system]
+  product: [price, value, dlc, monetization, microtransactions, updates, developer_support, early_access, missing_features]
+  multiplayer: [matchmaking, netcode, cheating, player_population, co_op, pvp, griefing]
