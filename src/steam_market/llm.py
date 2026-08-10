@@ -49,17 +49,20 @@ class LLMClient:
 
     async def structured(self, system: str, user: dict, schema: type[T]) -> T:
         parse_error = ""
+        json_schema = schema.model_json_schema()
         for attempt in range(self.settings.llm_max_retries):
             prompt = {
                 "input": user,
-                "required_json_schema": schema.model_json_schema(),
+                "required_json_schema": json_schema,
                 "parse_feedback": parse_error,
             }
             response = await self.client.post(f"{self.settings.llm_base_url.rstrip('/')}/chat/completions", json={
                 "model": self.settings.llm_model,
                 "temperature": self.settings.llm_temperature,
                 "reasoning_effort": self.settings.llm_reasoning_effort,
-                "response_format": {"type": "json_object"},
+                "response_format": {"type": "json_schema", "json_schema": {
+                    "name": schema.__name__, "strict": True, "schema": json_schema,
+                }},
                 "messages": [{"role": "system", "content": system},
                              {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)}],
             })

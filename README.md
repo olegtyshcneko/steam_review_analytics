@@ -70,6 +70,7 @@ All settings use environment variables and can live in `.env`. See
 - local endpoint, exact model ID, timeout, temperature, bounded batch size, and concurrency
 - `LLM_REASONING_EFFORT=none` for deterministic extraction without unnecessary hidden reasoning
 - prompts omit empty optional arrays and constrain normalized statements to keep local inference efficient
+- the OpenAI-compatible endpoint receives the full Pydantic JSON Schema through `response_format`
 - languages and minimum review length eligible for enrichment
 - taxonomy/prompt enrichment versions
 - `STEAMID_HASH_SALT`, used before author IDs ever reach DuckDB
