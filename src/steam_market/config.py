@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     llm_api_key: str = "local"
     llm_model: str = "Qwen3.6-35B-A3B"
     llm_temperature: float = Field(0.1, ge=0, le=2)
+    llm_reasoning_effort: str = "none"
     llm_timeout_seconds: float = Field(180, gt=0)
     llm_concurrency: int = Field(1, ge=1)
     llm_batch_size: int = Field(8, ge=1, le=32)
@@ -41,6 +42,14 @@ class Settings(BaseSettings):
     def parse_languages(cls, value: object) -> object:
         if isinstance(value, str):
             return [part.strip().lower() for part in value.split(",") if part.strip()]
+        return value
+
+    @field_validator("llm_reasoning_effort")
+    @classmethod
+    def validate_reasoning_effort(cls, value: str) -> str:
+        allowed = {"none", "low", "medium", "high", "max"}
+        if value not in allowed:
+            raise ValueError(f"must be one of {sorted(allowed)}")
         return value
 
     def ensure_directories(self) -> None:

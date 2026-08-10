@@ -68,6 +68,7 @@ All settings use environment variables and can live in `.env`. See
 - source-specific request rates and bounded retry count
 - `STEAMSPY_CATALOG_PAGES` (one 1,000-entry broad page by default)
 - local endpoint, exact model ID, timeout, temperature, bounded batch size, and concurrency
+- `LLM_REASONING_EFFORT=none` for deterministic extraction without unnecessary hidden reasoning
 - languages and minimum review length eligible for enrichment
 - taxonomy/prompt enrichment versions
 - `STEAMID_HASH_SALT`, used before author IDs ever reach DuckDB

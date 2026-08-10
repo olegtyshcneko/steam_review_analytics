@@ -29,6 +29,11 @@ def test_comma_separated_language_environment(monkeypatch):
     assert Settings(_env_file=None).enrich_languages == ["english", "german"]
 
 
+def test_invalid_reasoning_effort_is_rejected():
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, llm_reasoning_effort="extreme")
+
+
 def test_deterministic_candidates():
     result = deterministic_candidates(["Deckbuilding", "Roguelike"], ["Strategy"])
     assert "Roguelike Deckbuilder" in result

@@ -58,6 +58,7 @@ class LLMClient:
             response = await self.client.post(f"{self.settings.llm_base_url.rstrip('/')}/chat/completions", json={
                 "model": self.settings.llm_model,
                 "temperature": self.settings.llm_temperature,
+                "reasoning_effort": self.settings.llm_reasoning_effort,
                 "response_format": {"type": "json_object"},
                 "messages": [{"role": "system", "content": system},
                              {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)}],
