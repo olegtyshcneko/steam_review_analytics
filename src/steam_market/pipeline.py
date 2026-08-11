@@ -109,7 +109,17 @@ class Pipeline:
                 raise RuntimeError(f"Pagination cursor repeated for appid {appid}: {cursor!r}")
             seen.add(cursor)
             page = await self.reviews.get_page(appid, cursor, self.settings.steam_reviews_per_page)
-            self.db.upsert_summary(appid, page.summary)
+            # Steam may omit query_summary on later cursor pages (including the
+            # empty terminal page). Do not let that default/empty model erase
+            # the valid summary fetched during qualification or on page one.
+            if (
+                page.summary.total_reviews
+                or page.summary.total_positive
+                or page.summary.total_negative
+                or page.summary.review_score is not None
+                or page.summary.review_score_desc is not None
+            ):
+                self.db.upsert_summary(appid, page.summary)
             if not page.reviews:
                 self.db.clear_checkpoint(key)
                 break

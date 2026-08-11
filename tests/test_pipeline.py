@@ -29,7 +29,7 @@ async def test_review_pagination_and_empty_final_page(settings, db):
     fake = FakeReviews([
         ReviewPage(summary=ReviewSummary(total_reviews=2), reviews=[review("1")], cursor="a+b="),
         ReviewPage(summary=ReviewSummary(total_reviews=2), reviews=[review("2")], cursor="last"),
-        ReviewPage(summary=ReviewSummary(total_reviews=2), reviews=[], cursor="last"),
+        ReviewPage(summary=ReviewSummary(), reviews=[], cursor="last"),
     ])
     pipeline.reviews = fake
     try:
@@ -38,6 +38,9 @@ async def test_review_pagination_and_empty_final_page(settings, db):
         assert fake.cursors == ["*", "a+b=", "last"]
         assert db.get_checkpoint("reviews:10") is None
         assert db.con.execute("SELECT count(*) FROM reviews").fetchone()[0] == 2
+        assert db.con.execute(
+            "SELECT total_reviews FROM game_review_summary WHERE appid=10"
+        ).fetchone()[0] == 2
     finally:
         await pipeline.store.close(); await pipeline.spy.close(); await pipeline.llm.close()
 
@@ -58,6 +61,7 @@ async def test_cursor_repeat_is_rejected(settings, db):
 @pytest.mark.asyncio
 async def test_resume_starts_at_saved_cursor(settings, db):
     db.upsert_catalog_game(10, "Game")
+    db.upsert_summary(10, ReviewSummary(total_reviews=50, total_positive=40, total_negative=10))
     db.checkpoint("reviews:10", "reviews", 10, {"cursor": "resume", "seen_cursors": ["*"]})
     pipeline = Pipeline(settings, db)
     await pipeline.reviews.close()
@@ -66,6 +70,9 @@ async def test_resume_starts_at_saved_cursor(settings, db):
     try:
         assert await pipeline.ingest_reviews(10) == 0
         assert fake.cursors == ["resume"]
+        assert db.con.execute(
+            "SELECT total_reviews FROM game_review_summary WHERE appid=10"
+        ).fetchone()[0] == 50
     finally:
         await pipeline.store.close(); await pipeline.spy.close(); await pipeline.llm.close()
 
