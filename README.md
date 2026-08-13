@@ -209,3 +209,11 @@ a running model.
 ```bash
 uv run pytest
 ```
+
+## Provider benchmarks
+
+The reproducible OpenRouter review-enrichment harness is
+`scripts/benchmark_openrouter.py`. Raw samples and responses stay under ignored
+`data/`; aggregate benchmark reports are committed under `benchmarks/`.
+
+Current result: [Gemini 3.7 Flash Batch vs DeepSeek V4 Flash](benchmarks/2026-08-14-openrouter-review-enrichment.md).
