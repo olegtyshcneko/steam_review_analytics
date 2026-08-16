@@ -83,12 +83,12 @@ class FakeLLM:
 
     async def enrich_reviews(self, rows, aspects):
         self.batch_sizes.append(len(rows))
-        return {rec_id: ReviewEnrichment(sentiment="positive", review_intent="praise", confidence=.9,
+        return {rec_id: ReviewEnrichment(sentiment="positive", review_intent="recommend", confidence=.9,
                 aspects=[Aspect(category="gameplay", subcategory="core_loop", sentiment="positive", confidence=.9)])
                 for rec_id, _, _ in rows}
 
     async def enrich_review(self, text, voted_up, aspects):
-        return ReviewEnrichment(sentiment="positive", review_intent="praise", confidence=.9)
+        return ReviewEnrichment(sentiment="positive", review_intent="recommend", confidence=.9)
 
 
 @pytest.mark.asyncio
@@ -137,11 +137,11 @@ def test_durable_stats_include_prior_resumed_work(settings, db):
 
     db.upsert_catalog_game(10, "Game")
     db.upsert_reviews(10, [review("1"), review("2"), review("3")], lambda value: value)
-    completed = ReviewEnrichment(sentiment="positive", review_intent="praise", confidence=.9,
-                                 praises=[Statement(label="core_loop", statement="Good")])
-    db.save_enrichment("1", 10, completed, "v1", "fixture", "completed")
-    db.save_enrichment("2", 10, None, "v1", "fixture", "skipped_language")
-    db.save_enrichment("3", 10, None, "v1", "fixture", "error", "fixture")
+    completed = ReviewEnrichment(sentiment="positive", review_intent="recommend", confidence=.9,
+                                 praises=[Statement(label="gameplay.core_loop", statement="Good")])
+    db.save_enrichment("1", 10, completed, settings.enrichment_version, "fixture", "completed")
+    db.save_enrichment("2", 10, None, settings.enrichment_version, "fixture", "skipped_language")
+    db.save_enrichment("3", 10, None, settings.enrichment_version, "fixture", "error", "fixture")
     pipeline = Pipeline(settings, db)
     stats = RunStats(reviews_ingested=99, reviews_enriched=99, skipped_reviews=99)
     pipeline._refresh_durable_stats(stats, [10])

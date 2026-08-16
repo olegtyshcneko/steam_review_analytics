@@ -10,7 +10,7 @@ import duckdb
 from .domain import GameClassification, ReviewEnrichment, ReviewSummary, utcnow
 
 
-SCHEMA_VERSION = "1"
+SCHEMA_VERSION = "2"
 
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS schema_metadata(version VARCHAR PRIMARY KEY, applied_at TIMESTAMP NOT NULL);
@@ -58,6 +58,12 @@ CREATE TABLE IF NOT EXISTS review_aspects(
  recommendation_id VARCHAR NOT NULL, enrichment_version VARCHAR NOT NULL, appid BIGINT NOT NULL,
  category VARCHAR NOT NULL, subcategory VARCHAR NOT NULL, sentiment VARCHAR NOT NULL,
  confidence DOUBLE, PRIMARY KEY(recommendation_id, enrichment_version, category, subcategory, sentiment)
+);
+CREATE TABLE IF NOT EXISTS review_discovered_topics(
+ recommendation_id VARCHAR NOT NULL, enrichment_version VARCHAR NOT NULL, appid BIGINT NOT NULL,
+ category VARCHAR NOT NULL, novel_topic VARCHAR NOT NULL, sentiment VARCHAR NOT NULL,
+ confidence DOUBLE,
+ PRIMARY KEY(recommendation_id, enrichment_version, category, novel_topic, sentiment)
 );
 CREATE TABLE IF NOT EXISTS ingestion_runs(
  run_id UUID PRIMARY KEY, run_type VARCHAR NOT NULL, started_at TIMESTAMP NOT NULL,
@@ -244,7 +250,8 @@ class Database:
           result.confidence, result.reasoning_summary, _json(result.proposed_labels), model_id, prompt_version, utcnow()])
 
     def save_enrichment(self, recommendation_id: str, appid: int, result: ReviewEnrichment | None,
-                        version: str, model_id: str, status: str, error: str | None = None) -> None:
+                        version: str, model_id: str, status: str, error: str | None = None,
+                        prompt_version: str = "v2") -> None:
         empty: Any = []
         values = result or empty
         get = lambda name, default=None: getattr(values, name, default)
@@ -261,18 +268,27 @@ class Database:
            _json([x.model_dump() for x in get("feature_requests", [])]), _json([x.model_dump() for x in get("technical_issues", [])]),
            _json([x.model_dump() for x in get("monetization_comments", [])]),
            _json([x.model_dump() for x in get("accessibility_comments", [])]),
-           _json([x.model_dump() for x in get("multiplayer_comments", [])]), get("confidence"), model_id, "v1", status, error, utcnow()])
+           _json([x.model_dump() for x in get("multiplayer_comments", [])]), get("confidence"), model_id, prompt_version, status, error, utcnow()])
         if result:
             self.con.execute("DELETE FROM review_aspects WHERE recommendation_id=? AND enrichment_version=?",
+                             [recommendation_id, version])
+            self.con.execute("DELETE FROM review_discovered_topics WHERE recommendation_id=? AND enrichment_version=?",
                              [recommendation_id, version])
             rows = [[recommendation_id, version, appid, x.category, x.subcategory, x.sentiment, x.confidence]
                     for x in result.aspects]
             if rows:
                 self.con.executemany("INSERT INTO review_aspects VALUES(?,?,?,?,?,?,?)", rows)
+            discoveries = [
+                [recommendation_id, version, appid, x.category, x.novel_topic, x.sentiment, x.confidence]
+                for x in result.aspects if x.novel_topic is not None
+            ]
+            if discoveries:
+                self.con.executemany("INSERT INTO review_discovered_topics VALUES(?,?,?,?,?,?,?)", discoveries)
 
     def table_counts(self) -> dict[str, int]:
         tables = ["games", "game_review_summary", "game_tags", "game_genre_classification", "reviews",
-                  "review_enrichment", "review_aspects", "ingestion_runs", "ingestion_checkpoints", "source_errors"]
+                  "review_enrichment", "review_aspects", "review_discovered_topics", "ingestion_runs",
+                  "ingestion_checkpoints", "source_errors"]
         return {table: self.con.execute(f"SELECT count(*) FROM {table}").fetchone()[0] for table in tables}
 
 

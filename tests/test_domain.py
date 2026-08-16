@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from steam_market.domain import Aspect, GameClassification, ReviewEnrichmentItem, enrichment_eligibility, review_band
+from steam_market.domain import Aspect, GameClassification, ReviewEnrichmentItem, Statement, enrichment_eligibility, review_band
 from steam_market.taxonomy import AspectTaxonomy, Taxonomy, deterministic_candidates
 from steam_market.config import Settings
 
@@ -55,11 +55,44 @@ def test_aspect_taxonomy_and_confidence_validation():
 
 def test_compact_enrichment_normalizes_to_full_model():
     item = ReviewEnrichmentItem.model_validate({
-        "id": "123", "s": "mixed", "i": "critique", "q": .9,
-        "a": [{"c": "technical", "s": "performance", "p": "negative", "q": .8}],
-        "co": [{"l": "performance", "t": "Frame rate drops."}],
+        "id": "123", "s": "mixed", "i": "mixed", "q": .9,
+        "a": [{"c": "technical", "s": "performance", "n": None, "p": "negative", "q": .8}],
+        "co": [{"l": "technical.performance", "n": None, "t": "Frame rate drops."}],
     })
     result = item.normalized()
     assert result.sentiment == "mixed"
     assert result.aspects[0].subcategory == "performance"
     assert result.complaints[0].statement == "Frame rate drops."
+
+
+def test_review_labels_use_canonical_taxonomy_or_constrained_discovery():
+    assert Statement(label="gameplay.combat", statement="Combat is responsive.")
+    discovered = Statement(
+        label="gameplay.other", novel_topic="finisher_pacing",
+        statement="Finishers interrupt combat flow.",
+    )
+    assert discovered.novel_topic == "finisher_pacing"
+
+    with pytest.raises(ValidationError, match="unknown canonical review label"):
+        Statement(label="combat", statement="Combat is responsive.")
+    with pytest.raises(ValidationError, match="novel_topic is required"):
+        Statement(label="gameplay.other", statement="Unclassified gameplay issue.")
+    with pytest.raises(ValidationError, match="only allowed"):
+        Statement(label="gameplay.combat", novel_topic="fighting", statement="Combat is responsive.")
+    with pytest.raises(ValidationError):
+        Statement(label="gameplay.other", novel_topic="Finisher Pacing!", statement="Bad finishers.")
+
+
+def test_review_intent_is_controlled_and_bucket_category_matches():
+    with pytest.raises(ValidationError):
+        ReviewEnrichmentItem.model_validate({"id": "1", "s": "positive", "i": "recommended", "q": .9})
+    with pytest.raises(ValidationError, match="technical_issues labels must use the technical category"):
+        ReviewEnrichmentItem.model_validate({
+            "id": "1", "s": "negative", "i": "bug_report", "q": .9,
+            "ti": [{"l": "gameplay.combat", "n": None, "t": "Combat crashes."}],
+        })
+    with pytest.raises(ValidationError, match="statement discoveries must also appear in aspects"):
+        ReviewEnrichmentItem.model_validate({
+            "id": "1", "s": "negative", "i": "discourage", "q": .9,
+            "co": [{"l": "gameplay.other", "n": "finisher_pacing", "t": "Finishers interrupt combat."}],
+        })

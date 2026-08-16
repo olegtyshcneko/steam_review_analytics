@@ -5,6 +5,7 @@ from scripts.benchmark_openrouter import (
     compact_schema,
     judge_schema,
     make_batches,
+    parse_response_partial,
     stable_sample,
 )
 from steam_market.config import Settings
@@ -28,6 +29,22 @@ def test_compact_schema_is_fully_inlined_and_requires_all_fields():
     assert "$defs" not in str(schema)
     item = schema["properties"]["items"]["items"]
     assert set(item["required"]) == set(item["properties"])
+    assert item["properties"]["i"]["enum"] == [
+        "recommend", "discourage", "mixed", "informational", "bug_report"
+    ]
+    statement = item["properties"]["co"]["items"]
+    assert "gameplay.combat" in statement["properties"]["l"]["enum"]
+
+
+def test_partial_parser_accepts_reordering_and_reports_missing_reviews():
+    body = {
+        "choices": [{"message": {"content": '{"items":[{"id":"2","s":"positive","i":"recommend","q":0.9}]}'}}],
+        "usage": {"prompt_tokens": 10},
+    }
+    outputs, usage, errors = parse_response_partial(body, ["1", "2"])
+    assert list(outputs) == ["2"]
+    assert errors == ["1: missing from response"]
+    assert usage["prompt_tokens"] == 10
 
 
 def test_judge_schema_uses_an_enumerated_five_point_scale():

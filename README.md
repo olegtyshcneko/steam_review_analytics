@@ -69,6 +69,8 @@ All settings use environment variables and can live in `.env`. See
 - `STEAMSPY_CATALOG_PAGES` (one 1,000-entry broad page by default)
 - local endpoint, exact model ID, timeout, temperature, bounded batch size, and concurrency
 - `LLM_REASONING_EFFORT=none` for deterministic extraction without unnecessary hidden reasoning
+- review enrichment v2 uses controlled intent values and canonical `category.topic` labels
+- genuinely new topics use `category.other` plus a constrained `novel_topic`, keeping statistics stable while preserving discovery
 - prompts omit empty optional arrays and constrain normalized statements to keep local inference efficient
 - the OpenAI-compatible endpoint receives the full Pydantic JSON Schema through `response_format`
 - bounded batches use a compact validated wire schema and expand to the full normalized database model
@@ -154,6 +156,11 @@ SELECT subcategory,
        sum(sentiment='negative') AS negative
 FROM review_aspects GROUP BY 1 ORDER BY negative DESC;
 
+-- Candidate topics discovered under controlled category.other fallbacks
+SELECT category, novel_topic, count(*) AS mentions
+FROM review_discovered_topics
+GROUP BY 1,2 ORDER BY mentions DESC;
+
 -- Complaints from high-playtime players
 SELECT g.name, r.playtime_at_review_minutes, e.complaints
 FROM reviews r JOIN games g USING(appid)
@@ -173,6 +180,14 @@ FROM game_market_data GROUP BY 1,2 ORDER BY 1,2;
 The useful views are `latest_game_classification`,
 `latest_review_enrichment`, `qualified_games`, `game_market_data`, and
 `review_analysis`.
+
+## Enrichment model status
+
+Paid model testing is currently paused. Gemini 3.7 Flash is provisionally
+selected for the next run, whose purpose is to enrich and analyze a frozen game
+corpus rather than conduct another model bake-off. See the
+[model checkpoint](benchmarks/2026-08-16-enrichment-model-tombstone.md) for the
+evidence, safeguards, and next-run objective.
 
 ## Backups and exports
 

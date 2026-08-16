@@ -27,7 +27,7 @@ import httpx
 from pydantic import BaseModel, Field, ValidationError
 
 from steam_market.config import Settings
-from steam_market.domain import ReviewEnrichmentBatch, ReviewEnrichmentItem, enrichment_eligibility
+from steam_market.domain import ReviewEnrichmentItem, enrichment_eligibility
 from steam_market.llm import _extract_json
 from steam_market.taxonomy import AspectTaxonomy
 
@@ -132,7 +132,12 @@ def make_batches(rows: list[tuple[str, str, bool | None]], settings: Settings) -
     return batches
 
 
-def request_body(model: str, batch: list[tuple[str, str, bool | None]], reasoning_effort: str) -> dict[str, Any]:
+def request_body(
+    model: str,
+    batch: list[tuple[str, str, bool | None]],
+    reasoning_effort: str,
+    parse_feedback: str = "",
+) -> dict[str, Any]:
     schema = compact_schema()
     aspects = AspectTaxonomy()
     user = {
@@ -147,15 +152,15 @@ def request_body(model: str, batch: list[tuple[str, str, bool | None]], reasonin
             "pc": "player_context", "a": "aspects", "co": "complaints", "pr": "praises",
             "fr": "feature_requests", "ti": "technical_issues", "mo": "monetization_comments",
             "ac": "accessibility_comments", "mu": "multiplayer_comments",
-            "aspect": {"c": "category", "s": "subcategory", "p": "sentiment", "q": "confidence"},
-            "statement": {"l": "label", "t": "statement"},
+            "aspect": {"c": "category", "s": "subcategory", "n": "novel_topic; empty string unless topic is other", "p": "sentiment", "q": "confidence"},
+            "statement": {"l": "canonical category.topic label", "n": "novel_topic; empty string unless label ends in .other", "t": "statement"},
         },
     }
-    prompt = {"input": user, "required_json_schema": schema, "parse_feedback": ""}
+    prompt = {"input": user, "required_json_schema": schema, "parse_feedback": parse_feedback}
     return {
         "model": model,
         "messages": [
-            {"role": "system", "content": (ROOT / "prompts/review_enrichment_v1.md").read_text()},
+            {"role": "system", "content": (ROOT / "prompts/review_enrichment_v2.md").read_text()},
             {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
         ],
         "response_format": {
@@ -171,24 +176,38 @@ def request_body(model: str, batch: list[tuple[str, str, bool | None]], reasonin
 
 def compact_schema() -> dict[str, Any]:
     """Inline the schema for providers whose native Batch API rejects JSON Schema refs."""
+    taxonomy = AspectTaxonomy()
     sentiment = {"type": "string", "enum": ["positive", "mixed", "negative", "neutral"]}
+    novel_topic = {
+        "type": "string",
+        "pattern": "^(?:|[a-z][a-z0-9]*(?:_[a-z0-9]+){0,3})$",
+        "maxLength": 64,
+    }
     statement = {
         "type": "object",
-        "properties": {"l": {"type": "string"}, "t": {"type": "string"}},
-        "required": ["l", "t"],
+        "properties": {
+            "l": {"type": "string", "enum": sorted(taxonomy.labels)},
+            "n": novel_topic,
+            "t": {"type": "string"},
+        },
+        "required": ["l", "n", "t"],
         "additionalProperties": False,
     }
     aspect = {
         "type": "object",
         "properties": {
-            "c": {"type": "string"}, "s": {"type": "string"}, "p": sentiment,
+            "c": {"type": "string", "enum": sorted(taxonomy.categories)},
+            "s": {"type": "string", "enum": sorted(set().union(*taxonomy.categories.values()))},
+            "n": novel_topic,
+            "p": sentiment,
             "q": {"type": "number", "minimum": 0, "maximum": 1},
         },
-        "required": ["c", "s", "p", "q"],
+        "required": ["c", "s", "n", "p", "q"],
         "additionalProperties": False,
     }
     properties: dict[str, Any] = {
-        "id": {"type": "string"}, "s": sentiment, "i": {"type": "string"},
+        "id": {"type": "string"}, "s": sentiment,
+        "i": {"type": "string", "enum": ["recommend", "discourage", "mixed", "informational", "bug_report"]},
         "q": {"type": "number", "minimum": 0, "maximum": 1},
         "pc": {"type": "array", "items": {"type": "string"}},
         "a": {"type": "array", "items": aspect},
@@ -205,23 +224,51 @@ def compact_schema() -> dict[str, Any]:
         "required": ["items"],
         "additionalProperties": False,
     }
-def parse_response(body: dict[str, Any], expected_ids: list[str]) -> tuple[dict[str, dict[str, Any]], dict[str, float | int]]:
+def parse_response_partial(
+    body: dict[str, Any], expected_ids: list[str]
+) -> tuple[dict[str, dict[str, Any]], dict[str, float | int], list[str]]:
     content = body["choices"][0]["message"]["content"]
-    parsed = ReviewEnrichmentBatch.model_validate_json(_extract_json(content))
-    actual_ids = [item.id for item in parsed.items]
-    if actual_ids != expected_ids:
-        raise ValueError(f"response IDs differ: expected {expected_ids}, got {actual_ids}")
+    payload = json.loads(_extract_json(content))
+    items = payload.get("items", [])
+    actual_ids = [str(item.get("id")) for item in items]
+    unexpected = sorted(set(actual_ids) - set(expected_ids))
+    duplicates = sorted(value for value, count in Counter(actual_ids).items() if count > 1)
+    if unexpected or duplicates:
+        raise ValueError(f"response has unexpected IDs {unexpected} or duplicate IDs {duplicates}")
+    outputs: dict[str, dict[str, Any]] = {}
+    errors = [f"{value}: missing from response" for value in expected_ids if value not in actual_ids]
+    for item in items:
+        for aspect in item.get("a", []):
+            if aspect.get("n") == "":
+                aspect["n"] = None
+        for key in ("co", "pr", "fr", "ti", "mo", "ac", "mu"):
+            for statement in item.get(key, []):
+                if statement.get("n") == "":
+                    statement["n"] = None
+        try:
+            parsed = ReviewEnrichmentItem.model_validate(item)
+            outputs[parsed.id] = parsed.model_dump()
+        except ValidationError as exc:
+            errors.append(f"{item.get('id')}: {str(exc)[:500]}")
     usage = body.get("usage") or {}
     completion_details = usage.get("completion_tokens_details") or {}
     return (
-        {item.id: item.model_dump() for item in parsed.items},
+        outputs,
         {
             "prompt_tokens": int(usage.get("prompt_tokens") or 0),
             "completion_tokens": int(usage.get("completion_tokens") or 0),
             "reasoning_tokens": int(completion_details.get("reasoning_tokens") or 0),
             "cost_usd": float(usage.get("cost") or 0),
         },
+        errors,
     )
+
+
+def parse_response(body: dict[str, Any], expected_ids: list[str]) -> tuple[dict[str, dict[str, Any]], dict[str, float | int]]:
+    outputs, usage, errors = parse_response_partial(body, expected_ids)
+    if errors:
+        raise ValueError(f"invalid review items: {errors}")
+    return outputs, usage
 
 
 def load_model_run(path: Path) -> ModelRun:
@@ -246,7 +293,9 @@ async def post_with_retry(client: httpx.AsyncClient, url: str, body: dict[str, A
     raise RuntimeError(f"request failed after {attempts} attempts: {last_error}")
 
 
-async def run_deepseek(batches: list[list[tuple[str, str, bool | None]]], concurrency: int) -> ModelRun:
+async def run_deepseek(
+    batches: list[list[tuple[str, str, bool | None]]], concurrency: int, parse_feedback: str = ""
+) -> ModelRun:
     run = ModelRun(model=DEEPSEEK_MODEL, mode="concurrent semantic batches", started_at=now())
     started = time.monotonic()
     semaphore = asyncio.Semaphore(concurrency)
@@ -261,13 +310,15 @@ async def run_deepseek(batches: list[list[tuple[str, str, bool | None]]], concur
                     response = await post_with_retry(
                         client,
                         f"{OPENROUTER_API}/v1/chat/completions",
-                        request_body(DEEPSEEK_MODEL, batch, "none"),
+                        request_body(DEEPSEEK_MODEL, batch, "none", parse_feedback),
                         attempts=2,
                     )
-                    outputs, usage = parse_response(response.json(), expected)
+                    outputs, usage, item_errors = parse_response_partial(response.json(), expected)
                     run.outputs.update(outputs)
                     for key, value in usage.items():
                         setattr(record, key, value)
+                    if item_errors:
+                        record.error = f"partial validation failure: {item_errors}"
                 except Exception as exc:  # preserve failures as benchmark results
                     record.error = f"{type(exc).__name__}: {str(exc)[:500]}"
                 finally:
@@ -298,6 +349,7 @@ async def run_gemini_batch(batches: list[list[tuple[str, str, bool | None]]], po
         })
         state = created.json()
         run.batch_id = state["id"]
+        print(f"Gemini batch submitted: {run.batch_id}", flush=True)
         while state.get("status") not in TERMINAL_BATCH_STATES:
             await asyncio.sleep(poll_seconds)
             response = await client.get(f"{OPENROUTER_API}/beta/batches/{run.batch_id}", headers=headers())
@@ -306,7 +358,10 @@ async def run_gemini_batch(batches: list[list[tuple[str, str, bool | None]]], po
             response.raise_for_status()
             state = response.json()
         if state.get("status") != "completed":
-            raise RuntimeError(f"Gemini batch ended as {state.get('status')}: {state.get('error')}")
+            raise RuntimeError(
+                f"Gemini batch {run.batch_id} ended as {state.get('status')}: "
+                f"{state.get('error')}; results={len(state.get('results') or [])}"
+            )
         for result in state.get("results") or []:
             custom_id = result.get("custom_id")
             if custom_id not in records:
@@ -315,10 +370,12 @@ async def run_gemini_batch(batches: list[list[tuple[str, str, bool | None]]], po
             response = result.get("response") or {}
             body = response.get("body") or response
             try:
-                outputs, usage = parse_response(body, record.review_ids)
+                outputs, usage, item_errors = parse_response_partial(body, record.review_ids)
                 run.outputs.update(outputs)
                 for key, value in usage.items():
                     setattr(record, key, value)
+                if item_errors:
+                    record.error = f"partial validation failure: {item_errors}"
             except Exception as exc:
                 error = result.get("error")
                 record.error = f"{type(exc).__name__}: {str(exc)[:400]}; upstream={str(error)[:200]}"
@@ -543,6 +600,7 @@ async def main(args: argparse.Namespace) -> None:
     output_dir = Path(args.output_dir)
     manifest = {
         "created_at": now(), "appid": args.appid, "sample_size": len(reviews), "seed": args.seed,
+        "selected_models": args.models,
         "sample_hash": hashlib.sha256("\n".join(sorted(review_map)).encode()).hexdigest(),
         "requests": len(batches), "batch_size": settings.llm_batch_size,
         "batch_max_characters": settings.llm_batch_max_characters,
@@ -552,31 +610,41 @@ async def main(args: argparse.Namespace) -> None:
     save_json(output_dir / "manifest.json", manifest)
     print(f"Selected {len(reviews)} eligible reviews in {len(batches)} requests; sample={manifest['sample_hash'][:12]}", flush=True)
 
-    if args.resume and (output_dir / "deepseek.json").exists() and (output_dir / "gemini.json").exists():
-        deepseek = load_model_run(output_dir / "deepseek.json")
-        gemini = load_model_run(output_dir / "gemini.json")
+    saved_paths = {model: output_dir / f"{model}.json" for model in args.models}
+    if args.resume and all(path.exists() for path in saved_paths.values()):
+        runs = {model: load_model_run(path) for model, path in saved_paths.items()}
         print("Loaded existing model outputs; rerunning analysis/judge only", flush=True)
     else:
-        deepseek, gemini = await asyncio.gather(
-            run_deepseek(batches, args.concurrency),
-            run_gemini_batch(batches, args.poll_seconds),
-        )
-        save_json(output_dir / "deepseek.json", asdict(deepseek))
-        save_json(output_dir / "gemini.json", asdict(gemini))
-        print(f"DeepSeek valid={len(deepseek.outputs)} wall={deepseek.wall_seconds:.1f}s", flush=True)
-        print(f"Gemini valid={len(gemini.outputs)} wall={gemini.wall_seconds:.1f}s", flush=True)
+        pending = []
+        for model in args.models:
+            if model == "deepseek":
+                pending.append(run_deepseek(batches, args.concurrency))
+            else:
+                pending.append(run_gemini_batch(batches, args.poll_seconds))
+        completed = await asyncio.gather(*pending)
+        runs = dict(zip(args.models, completed, strict=True))
+        for model, run in runs.items():
+            save_json(saved_paths[model], asdict(run))
+            print(f"{model.title()} valid={len(run.outputs)} wall={run.wall_seconds:.1f}s", flush=True)
 
-    judge = await judge_pairs(review_map, deepseek, gemini, args.judge_size, args.judge_concurrency, args.seed)
-    save_json(output_dir / "judge.json", judge)
     summary = {
         "benchmark": manifest,
         "models": {
-            "deepseek": {"model": deepseek.model, "mode": deepseek.mode, **automatic_metrics(deepseek, review_map)},
-            "gemini": {"model": gemini.model, "mode": gemini.mode, "batch_id": gemini.batch_id, **automatic_metrics(gemini, review_map)},
+            model: {
+                "model": run.model, "mode": run.mode, "batch_id": run.batch_id,
+                **automatic_metrics(run, review_map),
+            }
+            for model, run in runs.items()
         },
-        "agreement": pair_agreement(deepseek, gemini),
-        "blind_judge": {key: value for key, value in judge.items() if key != "judgments"},
     }
+    if {"deepseek", "gemini"} <= runs.keys():
+        deepseek, gemini = runs["deepseek"], runs["gemini"]
+        judge = await judge_pairs(
+            review_map, deepseek, gemini, args.judge_size, args.judge_concurrency, args.seed
+        )
+        save_json(output_dir / "judge.json", judge)
+        summary["agreement"] = pair_agreement(deepseek, gemini)
+        summary["blind_judge"] = {key: value for key, value in judge.items() if key != "judgments"}
     save_json(output_dir / "summary.json", summary)
     print(json.dumps(summary, indent=2), flush=True)
 
@@ -590,6 +658,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--poll-seconds", type=float, default=10)
     parser.add_argument("--judge-size", type=int, default=100)
     parser.add_argument("--judge-concurrency", type=int, default=10)
+    parser.add_argument("--models", nargs="+", choices=("deepseek", "gemini"),
+                        default=["deepseek", "gemini"])
     parser.add_argument("--output-dir", default="data/benchmarks/openrouter-2026-08-13")
     parser.add_argument("--resume", action="store_true", help="Reuse saved provider outputs and rerun judge/analysis")
     return parser.parse_args()

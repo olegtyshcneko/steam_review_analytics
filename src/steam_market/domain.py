@@ -1,9 +1,50 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+from .taxonomy import AspectTaxonomy
+
+
+ReviewIntent = Literal["recommend", "discourage", "mixed", "informational", "bug_report"]
+NovelTopic = Annotated[
+    str,
+    Field(
+        min_length=2,
+        max_length=64,
+        pattern=r"^[a-z][a-z0-9]*(?:_[a-z0-9]+){0,3}$",
+        description="One to four lowercase snake_case words for a genuinely new topic.",
+    ),
+]
+
+_ASPECT_TAXONOMY = AspectTaxonomy()
+_CATEGORY_SCHEMA = {"enum": sorted(_ASPECT_TAXONOMY.categories)}
+_SUBCATEGORY_SCHEMA = {"enum": sorted(set().union(*_ASPECT_TAXONOMY.categories.values()))}
+_LABEL_SCHEMA = {"enum": sorted(_ASPECT_TAXONOMY.labels)}
+
+
+def _validate_topic(category: str, subcategory: str, novel_topic: str | None) -> None:
+    if not _ASPECT_TAXONOMY.validate(category, subcategory):
+        raise ValueError(f"unknown canonical review topic: {category}.{subcategory}")
+    if subcategory == "other" and novel_topic is None:
+        raise ValueError("novel_topic is required when subcategory is 'other'")
+    if subcategory != "other" and novel_topic is not None:
+        raise ValueError("novel_topic is only allowed when subcategory is 'other'")
+
+
+def _validate_statement(label: str, novel_topic: str | None) -> None:
+    if not _ASPECT_TAXONOMY.validate_label(label):
+        raise ValueError(f"unknown canonical review label: {label}")
+    category, subcategory = label.split(".", 1)
+    _validate_topic(category, subcategory, novel_topic)
+
+
+def _validate_bucket(values: list[Statement], category: str, bucket: str) -> None:
+    invalid = [value.label for value in values if not value.label.startswith(f"{category}.")]
+    if invalid:
+        raise ValueError(f"{bucket} labels must use the {category} category: {invalid}")
 
 
 def utcnow() -> datetime:
@@ -31,20 +72,35 @@ class ReviewPage(BaseModel):
 
 
 class Aspect(BaseModel):
-    category: str
-    subcategory: str
+    category: str = Field(json_schema_extra=_CATEGORY_SCHEMA)
+    subcategory: str = Field(json_schema_extra=_SUBCATEGORY_SCHEMA)
+    novel_topic: NovelTopic | None = None
     sentiment: Literal["positive", "mixed", "negative", "neutral"]
     confidence: float = Field(ge=0, le=1)
 
+    @model_validator(mode="after")
+    def canonical_or_discovered(self) -> Aspect:
+        _validate_topic(self.category, self.subcategory, self.novel_topic)
+        return self
+
 
 class Statement(BaseModel):
-    label: str
+    label: str = Field(
+        json_schema_extra=_LABEL_SCHEMA,
+        description="Canonical category.topic label; use category.other only for discovery.",
+    )
+    novel_topic: NovelTopic | None = None
     statement: str
+
+    @model_validator(mode="after")
+    def canonical_or_discovered(self) -> Statement:
+        _validate_statement(self.label, self.novel_topic)
+        return self
 
 
 class ReviewEnrichment(BaseModel):
     sentiment: Literal["positive", "mixed", "negative", "neutral"]
-    review_intent: str
+    review_intent: ReviewIntent
     player_context: list[str] = []
     aspects: list[Aspect] = []
     complaints: list[Statement] = []
@@ -56,23 +112,56 @@ class ReviewEnrichment(BaseModel):
     multiplayer_comments: list[Statement] = []
     confidence: float = Field(ge=0, le=1)
 
+    @model_validator(mode="after")
+    def bucket_categories_match(self) -> ReviewEnrichment:
+        _validate_bucket(self.technical_issues, "technical", "technical_issues")
+        _validate_bucket(self.monetization_comments, "product", "monetization_comments")
+        _validate_bucket(self.accessibility_comments, "accessibility", "accessibility_comments")
+        _validate_bucket(self.multiplayer_comments, "multiplayer", "multiplayer_comments")
+        aspect_discoveries = {
+            (value.category, value.novel_topic) for value in self.aspects if value.novel_topic is not None
+        }
+        statements = (
+            self.complaints + self.praises + self.feature_requests + self.technical_issues
+            + self.monetization_comments + self.accessibility_comments + self.multiplayer_comments
+        )
+        statement_discoveries = {
+            (value.label.split(".", 1)[0], value.novel_topic)
+            for value in statements if value.novel_topic is not None
+        }
+        if missing := statement_discoveries - aspect_discoveries:
+            raise ValueError(f"statement discoveries must also appear in aspects: {sorted(missing)}")
+        return self
+
 
 class CompactAspect(BaseModel):
-    c: str
-    s: str
+    c: str = Field(json_schema_extra=_CATEGORY_SCHEMA)
+    s: str = Field(json_schema_extra=_SUBCATEGORY_SCHEMA)
+    n: NovelTopic | None = None
     p: Literal["positive", "mixed", "negative", "neutral"]
     q: float = Field(ge=0, le=1)
 
+    @model_validator(mode="after")
+    def canonical_or_discovered(self) -> CompactAspect:
+        _validate_topic(self.c, self.s, self.n)
+        return self
+
 
 class CompactStatement(BaseModel):
-    l: str
+    l: str = Field(json_schema_extra=_LABEL_SCHEMA)
+    n: NovelTopic | None = None
     t: str
+
+    @model_validator(mode="after")
+    def canonical_or_discovered(self) -> CompactStatement:
+        _validate_statement(self.l, self.n)
+        return self
 
 
 class ReviewEnrichmentItem(BaseModel):
     id: str
     s: Literal["positive", "mixed", "negative", "neutral"]
-    i: str
+    i: ReviewIntent
     q: float = Field(ge=0, le=1)
     pc: list[str] = []
     a: list[CompactAspect] = []
@@ -84,16 +173,34 @@ class ReviewEnrichmentItem(BaseModel):
     ac: list[CompactStatement] = []
     mu: list[CompactStatement] = []
 
+    @model_validator(mode="after")
+    def bucket_categories_match(self) -> ReviewEnrichmentItem:
+        def expanded(values: list[CompactStatement]) -> list[Statement]:
+            return [Statement(label=value.l, novel_topic=value.n, statement=value.t) for value in values]
+
+        _validate_bucket(expanded(self.ti), "technical", "technical_issues")
+        _validate_bucket(expanded(self.mo), "product", "monetization_comments")
+        _validate_bucket(expanded(self.ac), "accessibility", "accessibility_comments")
+        _validate_bucket(expanded(self.mu), "multiplayer", "multiplayer_comments")
+        aspect_discoveries = {(value.c, value.n) for value in self.a if value.n is not None}
+        statements = self.co + self.pr + self.fr + self.ti + self.mo + self.ac + self.mu
+        statement_discoveries = {
+            (value.l.split(".", 1)[0], value.n) for value in statements if value.n is not None
+        }
+        if missing := statement_discoveries - aspect_discoveries:
+            raise ValueError(f"statement discoveries must also appear in aspects: {sorted(missing)}")
+        return self
+
     def normalized(self) -> ReviewEnrichment:
         def statements(values: list[CompactStatement]) -> list[Statement]:
-            return [Statement(label=value.l, statement=value.t) for value in values]
+            return [Statement(label=value.l, novel_topic=value.n, statement=value.t) for value in values]
 
         return ReviewEnrichment(
             sentiment=self.s,
             review_intent=self.i,
             confidence=self.q,
             player_context=self.pc,
-            aspects=[Aspect(category=value.c, subcategory=value.s,
+            aspects=[Aspect(category=value.c, subcategory=value.s, novel_topic=value.n,
                             sentiment=value.p, confidence=value.q) for value in self.a],
             complaints=statements(self.co),
             praises=statements(self.pr),

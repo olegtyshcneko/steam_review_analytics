@@ -85,7 +85,7 @@ class LLMClient:
         return taxonomy.validate(result)
 
     async def enrich_review(self, text: str, voted_up: bool | None, aspects: AspectTaxonomy) -> ReviewEnrichment:
-        system = (ROOT / "prompts" / "review_enrichment_v1.md").read_text()
+        system = (ROOT / "prompts" / "review_enrichment_v2.md").read_text()
         result = await self.structured(system, {
             "review_text": text, "source_voted_up": voted_up,
             "allowed_aspects": {key: sorted(value) for key, value in aspects.categories.items()},
@@ -98,7 +98,7 @@ class LLMClient:
     async def enrich_reviews(self, reviews: list[tuple[str, str, bool | None]],
                              aspects: AspectTaxonomy) -> dict[str, ReviewEnrichment]:
         """Enrich a bounded batch and reject partial/misidentified responses."""
-        system = (ROOT / "prompts" / "review_enrichment_v1.md").read_text()
+        system = (ROOT / "prompts" / "review_enrichment_v2.md").read_text()
         expected = [item[0] for item in reviews]
         result = await self.structured(system, {
             "reviews": [{"recommendation_id": rec_id, "review_text": text, "source_voted_up": voted_up}
@@ -110,8 +110,8 @@ class LLMClient:
                 "pc": "player_context", "a": "aspects", "co": "complaints", "pr": "praises",
                 "fr": "feature_requests", "ti": "technical_issues", "mo": "monetization_comments",
                 "ac": "accessibility_comments", "mu": "multiplayer_comments",
-                "aspect": {"c": "category", "s": "subcategory", "p": "sentiment", "q": "confidence"},
-                "statement": {"l": "label", "t": "statement"},
+                "aspect": {"c": "category", "s": "subcategory", "n": "novel_topic", "p": "sentiment", "q": "confidence"},
+                "statement": {"l": "canonical category.topic label", "n": "novel_topic", "t": "statement"},
             },
         }, ReviewEnrichmentBatch)
         actual = [item.id for item in result.items]

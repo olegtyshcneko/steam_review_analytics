@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     llm_batch_max_characters: int = Field(12000, ge=1000, le=50000)
     enrich_languages: Annotated[list[str], NoDecode] = ["english"]
     enrich_min_characters: int = Field(40, ge=1)
-    enrichment_version: str = "v1"
+    enrichment_version: str = "v2"
     genre_taxonomy_version: str = "v1"
     steamid_hash_salt: str = "change-me"
     http_max_retries: int = Field(5, ge=0)

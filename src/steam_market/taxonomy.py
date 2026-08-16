@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import yaml
 
-from .domain import GameClassification
+
+if TYPE_CHECKING:
+    from .domain import GameClassification
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -64,9 +67,18 @@ def deterministic_candidates(tags: list[str], genres: list[str], description: st
 
 class AspectTaxonomy:
     def __init__(self, path: Path | None = None):
-        path = path or ROOT / "taxonomy" / "review_aspects_v1.yaml"
+        path = path or ROOT / "taxonomy" / "review_aspects_v2.yaml"
         self.data = yaml.safe_load(path.read_text())
+        self.version = str(self.data["version"])
         self.categories: dict[str, set[str]] = {k: set(v) for k, v in self.data["categories"].items()}
+        self.labels = {
+            f"{category}.{subcategory}"
+            for category, subcategories in self.categories.items()
+            for subcategory in subcategories
+        }
 
     def validate(self, category: str, subcategory: str) -> bool:
         return subcategory in self.categories.get(category, set())
+
+    def validate_label(self, label: str) -> bool:
+        return label in self.labels

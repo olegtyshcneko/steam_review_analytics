@@ -4,6 +4,7 @@ import hashlib
 import asyncio
 import json
 import random
+import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Callable
@@ -359,6 +360,19 @@ def validate_database(db: Database, taxonomy: Taxonomy | None = None, aspects: A
         "duplicate_reviews": "SELECT count(*)-count(DISTINCT recommendation_id) FROM reviews",
         "orphan_enrichment": "SELECT count(*) FROM review_enrichment e ANTI JOIN reviews r USING(recommendation_id)",
         "orphan_aspects": "SELECT count(*) FROM review_aspects a ANTI JOIN reviews r USING(recommendation_id)",
+        "orphan_discovered_topics": "SELECT count(*) FROM review_discovered_topics d ANTI JOIN reviews r USING(recommendation_id)",
+        "unresolved_other_aspects": """SELECT count(*) FROM review_aspects a
+          WHERE a.subcategory='other' AND NOT EXISTS (
+            SELECT 1 FROM review_discovered_topics d
+            WHERE d.recommendation_id=a.recommendation_id
+              AND d.enrichment_version=a.enrichment_version
+              AND d.category=a.category AND d.sentiment=a.sentiment)""",
+        "discoveries_without_other_aspect": """SELECT count(*) FROM review_discovered_topics d
+          WHERE NOT EXISTS (
+            SELECT 1 FROM review_aspects a
+            WHERE a.recommendation_id=d.recommendation_id
+              AND a.enrichment_version=d.enrichment_version
+              AND a.category=d.category AND a.subcategory='other' AND a.sentiment=d.sentiment)""",
         "empty_game_names": "SELECT count(*) FROM games WHERE trim(name)=''",
         "null_review_text": "SELECT count(*) FROM reviews WHERE review_text IS NULL",
         "invalid_confidence": "SELECT count(*) FROM review_enrichment WHERE confidence NOT BETWEEN 0 AND 1",
@@ -374,6 +388,13 @@ def validate_database(db: Database, taxonomy: Taxonomy | None = None, aspects: A
     for rec, category, subcategory in db.con.execute("SELECT recommendation_id,category,subcategory FROM review_aspects").fetchall():
         if not aspects.validate(category, subcategory):
             errors.append(f"review {rec}: invalid aspect {category}/{subcategory}")
+    for rec, category, novel_topic in db.con.execute(
+        "SELECT recommendation_id,category,novel_topic FROM review_discovered_topics"
+    ).fetchall():
+        if category not in aspects.categories:
+            errors.append(f"review {rec}: invalid discovery category {category}")
+        if not re.fullmatch(r"[a-z][a-z0-9]*(?:_[a-z0-9]+){0,3}", novel_topic):
+            errors.append(f"review {rec}: invalid novel topic {novel_topic}")
     completeness = []
     for appid, expected, actual in db.con.execute("""
       SELECT s.appid,s.total_reviews,count(r.recommendation_id) FROM game_review_summary s

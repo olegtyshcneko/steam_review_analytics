@@ -39,15 +39,20 @@ def test_enrichment_versioning_and_aspect_explosion(db):
     db.upsert_catalog_game(10, "Game")
     db.upsert_reviews(10, [REVIEW], lambda _: "hash")
     result = ReviewEnrichment(
-        sentiment="mixed", review_intent="critique", confidence=.9,
-        complaints=[Statement(label="performance", statement="Performance is bad")],
+        sentiment="mixed", review_intent="mixed", confidence=.9,
+        complaints=[Statement(label="technical.performance", statement="Performance is bad")],
         aspects=[Aspect(category="gameplay", subcategory="combat", sentiment="positive", confidence=.9),
-                 Aspect(category="technical", subcategory="performance", sentiment="negative", confidence=.8)],
+                 Aspect(category="technical", subcategory="performance", sentiment="negative", confidence=.8),
+                 Aspect(category="gameplay", subcategory="other", novel_topic="finisher_pacing",
+                        sentiment="negative", confidence=.7)],
     )
     db.save_enrichment("123", 10, result, "v1", "fixture", "completed")
     db.save_enrichment("123", 10, result, "v2", "fixture", "completed")
     assert db.con.execute("SELECT count(*) FROM review_enrichment").fetchone()[0] == 2
-    assert db.con.execute("SELECT count(*) FROM review_aspects").fetchone()[0] == 4
+    assert db.con.execute("SELECT count(*) FROM review_aspects").fetchone()[0] == 6
+    assert db.con.execute("SELECT category,novel_topic FROM review_discovered_topics").fetchall() == [
+        ("gameplay", "finisher_pacing"), ("gameplay", "finisher_pacing")
+    ]
     assert validate_database(db)["passed"]
 
 
