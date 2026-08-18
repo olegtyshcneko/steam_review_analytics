@@ -1,0 +1,2857 @@
+{
+  "generated_at": "2026-08-16T14:58:22.200996+00:00",
+  "model": "google/gemini-3.7-flash",
+  "coverage": {
+    "selected": 5724,
+    "valid": 5719,
+    "negative_selected": 1493,
+    "negative_valid": 1491,
+    "positive_selected": 4231,
+    "positive_valid": 4228,
+    "languages": 20,
+    "cost_usd": 2.2093186875
+  },
+  "methodology": {
+    "seed": 42,
+    "negative": "all reviews with at least 40 characters and four alphabetic tokens",
+    "positive": "deterministic SHA-256 sample of 500 eligible reviews per game",
+    "language_policy": "all Steam languages; model normalizes statements and topics into English"
+  },
+  "games": {
+    "4304930": {
+      "name": "Chef Knight",
+      "tier": "S",
+      "raw_reviews": 2143,
+      "raw_negative": 110,
+      "valid_negative": 71,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 44,
+          "rate": 0.6197183098591549
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 20,
+          "rate": 0.28169014084507044
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 15,
+          "rate": 0.2112676056338028
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 14,
+          "rate": 0.19718309859154928
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 10,
+          "rate": 0.14084507042253522
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 6,
+          "rate": 0.08450704225352113
+        },
+        {
+          "label": "gameplay.crafting",
+          "name": "Crafting",
+          "count": 6,
+          "rate": 0.08450704225352113
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 5,
+          "rate": 0.07042253521126761
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 4,
+          "rate": 0.056338028169014086
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 4,
+          "rate": 0.056338028169014086
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 3,
+          "rate": 0.04225352112676056
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 3,
+          "rate": 0.04225352112676056
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "product.updates",
+          "name": "Updates",
+          "count": 4,
+          "rate": 0.056338028169014086
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 4,
+          "rate": 0.056338028169014086
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 2,
+          "rate": 0.028169014084507043
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 1,
+          "rate": 0.014084507042253521
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 1,
+          "rate": 0.014084507042253521
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 1,
+          "rate": 0.014084507042253521
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 1,
+          "rate": 0.014084507042253521
+        },
+        {
+          "label": "gameplay.crafting",
+          "name": "Crafting",
+          "count": 1,
+          "rate": 0.014084507042253521
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 4,
+          "rate": 0.056338028169014086
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 4,
+          "rate": 0.056338028169014086
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 1,
+          "rate": 0.014084507042253521
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 1,
+          "rate": 0.014084507042253521
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 322,
+          "rate": 0.644
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 95,
+          "rate": 0.19
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 94,
+          "rate": 0.188
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 59,
+          "rate": 0.118
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 54,
+          "rate": 0.108
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 38,
+          "rate": 0.076
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 35,
+          "rate": 0.07
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 19,
+          "rate": 0.038
+        },
+        {
+          "label": "presentation.audio",
+          "name": "Audio",
+          "count": 17,
+          "rate": 0.034
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 16,
+          "rate": 0.032
+        }
+      ]
+    },
+    "3862670": {
+      "name": "Shelldiver",
+      "tier": "S",
+      "raw_reviews": 16987,
+      "raw_negative": 213,
+      "valid_negative": 110,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 57,
+          "rate": 0.5181818181818182
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 28,
+          "rate": 0.2545454545454545
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 24,
+          "rate": 0.21818181818181817
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 12,
+          "rate": 0.10909090909090909
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 11,
+          "rate": 0.1
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 11,
+          "rate": 0.1
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 10,
+          "rate": 0.09090909090909091
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 10,
+          "rate": 0.09090909090909091
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 8,
+          "rate": 0.07272727272727272
+        },
+        {
+          "label": "narrative.story",
+          "name": "Story",
+          "count": 7,
+          "rate": 0.06363636363636363
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 6,
+          "rate": 0.05454545454545454
+        },
+        {
+          "label": "narrative.ending",
+          "name": "Ending",
+          "count": 5,
+          "rate": 0.045454545454545456
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 2,
+          "rate": 0.01818181818181818
+        },
+        {
+          "label": "gameplay.boss_design",
+          "name": "Boss Design",
+          "count": 1,
+          "rate": 0.00909090909090909
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 1,
+          "rate": 0.00909090909090909
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 1,
+          "rate": 0.00909090909090909
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 1,
+          "rate": 0.00909090909090909
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 1,
+          "rate": 0.00909090909090909
+        },
+        {
+          "label": "content.enemy_variety",
+          "name": "Enemy Variety",
+          "count": 1,
+          "rate": 0.00909090909090909
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 1,
+          "rate": 0.00909090909090909
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 4,
+          "rate": 0.03636363636363636
+        },
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 3,
+          "rate": 0.02727272727272727
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 2,
+          "rate": 0.01818181818181818
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 1,
+          "rate": 0.00909090909090909
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 1,
+          "rate": 0.00909090909090909
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 346,
+          "rate": 0.692
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 122,
+          "rate": 0.244
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 79,
+          "rate": 0.158
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 76,
+          "rate": 0.152
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 62,
+          "rate": 0.124
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 39,
+          "rate": 0.078
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 33,
+          "rate": 0.066
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 31,
+          "rate": 0.062
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 20,
+          "rate": 0.04
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 19,
+          "rate": 0.038
+        }
+      ]
+    },
+    "3767740": {
+      "name": "Outhold",
+      "tier": "S",
+      "raw_reviews": 1750,
+      "raw_negative": 242,
+      "valid_negative": 171,
+      "valid_positive": 497,
+      "complaints": [
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 62,
+          "rate": 0.36257309941520466
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 42,
+          "rate": 0.24561403508771928
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 39,
+          "rate": 0.22807017543859648
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 38,
+          "rate": 0.2222222222222222
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 27,
+          "rate": 0.15789473684210525
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 21,
+          "rate": 0.12280701754385964
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 21,
+          "rate": 0.12280701754385964
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 19,
+          "rate": 0.1111111111111111
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 15,
+          "rate": 0.08771929824561403
+        },
+        {
+          "label": "gameplay.level_design",
+          "name": "Run / level structure",
+          "count": 8,
+          "rate": 0.04678362573099415
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 7,
+          "rate": 0.04093567251461988
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 6,
+          "rate": 0.03508771929824561
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 8,
+          "rate": 0.04678362573099415
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 3,
+          "rate": 0.017543859649122806
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 2,
+          "rate": 0.011695906432748537
+        },
+        {
+          "label": "content.quest_variety",
+          "name": "Quest Variety",
+          "count": 2,
+          "rate": 0.011695906432748537
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 1,
+          "rate": 0.005847953216374269
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 1,
+          "rate": 0.005847953216374269
+        },
+        {
+          "label": "product.missing_features",
+          "name": "Missing features",
+          "count": 1,
+          "rate": 0.005847953216374269
+        },
+        {
+          "label": "accessibility.other:fast_forward",
+          "name": "Fast Forward",
+          "count": 1,
+          "rate": 0.005847953216374269
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 6,
+          "rate": 0.03508771929824561
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 6,
+          "rate": 0.03508771929824561
+        },
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 5,
+          "rate": 0.029239766081871343
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 5,
+          "rate": 0.029239766081871343
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 1,
+          "rate": 0.005847953216374269
+        },
+        {
+          "label": "technical.stuttering",
+          "name": "Stuttering",
+          "count": 1,
+          "rate": 0.005847953216374269
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 294,
+          "rate": 0.5915492957746479
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 79,
+          "rate": 0.158953722334004
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 77,
+          "rate": 0.15492957746478872
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 72,
+          "rate": 0.1448692152917505
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 51,
+          "rate": 0.10261569416498995
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 42,
+          "rate": 0.08450704225352113
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 40,
+          "rate": 0.08048289738430583
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "count": 26,
+          "rate": 0.052313883299798795
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 25,
+          "rate": 0.05030181086519115
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 22,
+          "rate": 0.04426559356136821
+        }
+      ]
+    },
+    "3972320": {
+      "name": "Loot Loop",
+      "tier": "S",
+      "raw_reviews": 1484,
+      "raw_negative": 105,
+      "valid_negative": 80,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 38,
+          "rate": 0.475
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 21,
+          "rate": 0.2625
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 17,
+          "rate": 0.2125
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 15,
+          "rate": 0.1875
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 11,
+          "rate": 0.1375
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 8,
+          "rate": 0.1
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 6,
+          "rate": 0.075
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 5,
+          "rate": 0.0625
+        },
+        {
+          "label": "gameplay.boss_design",
+          "name": "Boss Design",
+          "count": 5,
+          "rate": 0.0625
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 4,
+          "rate": 0.05
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 4,
+          "rate": 0.05
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 4,
+          "rate": 0.05
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 2,
+          "rate": 0.025
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 2,
+          "rate": 0.025
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 1,
+          "rate": 0.0125
+        },
+        {
+          "label": "gameplay.itemization",
+          "name": "Itemization",
+          "count": 1,
+          "rate": 0.0125
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "count": 1,
+          "rate": 0.0125
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 1,
+          "rate": 0.0125
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 1,
+          "rate": 0.0125
+        },
+        {
+          "label": "product.updates",
+          "name": "Updates",
+          "count": 1,
+          "rate": 0.0125
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 1,
+          "rate": 0.0125
+        },
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 1,
+          "rate": 0.0125
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 1,
+          "rate": 0.0125
+        },
+        {
+          "label": "technical.other:firewall_warning",
+          "name": "Firewall Warning",
+          "count": 1,
+          "rate": 0.0125
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 319,
+          "rate": 0.638
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 85,
+          "rate": 0.17
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 76,
+          "rate": 0.152
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 68,
+          "rate": 0.136
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 61,
+          "rate": 0.122
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 45,
+          "rate": 0.09
+        },
+        {
+          "label": "presentation.music",
+          "name": "Music",
+          "count": 34,
+          "rate": 0.068
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 30,
+          "rate": 0.06
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 24,
+          "rate": 0.048
+        },
+        {
+          "label": "product.developer_support",
+          "name": "Developer support",
+          "count": 16,
+          "rate": 0.032
+        }
+      ]
+    },
+    "3948120": {
+      "name": "Scritchy Scratchy",
+      "tier": "A",
+      "raw_reviews": 14800,
+      "raw_negative": 812,
+      "valid_negative": 497,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 173,
+          "rate": 0.34808853118712274
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 92,
+          "rate": 0.1851106639839034
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 85,
+          "rate": 0.1710261569416499
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 84,
+          "rate": 0.16901408450704225
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 60,
+          "rate": 0.12072434607645875
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 59,
+          "rate": 0.11871227364185111
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 53,
+          "rate": 0.10663983903420524
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 39,
+          "rate": 0.07847082494969819
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 35,
+          "rate": 0.07042253521126761
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 29,
+          "rate": 0.05835010060362173
+        },
+        {
+          "label": "product.missing_features",
+          "name": "Missing features",
+          "count": 24,
+          "rate": 0.0482897384305835
+        },
+        {
+          "label": "gameplay.rng",
+          "name": "Rng",
+          "count": 20,
+          "rate": 0.04024144869215292
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 7,
+          "rate": 0.014084507042253521
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 7,
+          "rate": 0.014084507042253521
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 6,
+          "rate": 0.012072434607645875
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 6,
+          "rate": 0.012072434607645875
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 4,
+          "rate": 0.008048289738430584
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 3,
+          "rate": 0.006036217303822937
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 3,
+          "rate": 0.006036217303822937
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 3,
+          "rate": 0.006036217303822937
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 69,
+          "rate": 0.13883299798792756
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 18,
+          "rate": 0.03621730382293763
+        },
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 5,
+          "rate": 0.01006036217303823
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 4,
+          "rate": 0.008048289738430584
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 2,
+          "rate": 0.004024144869215292
+        },
+        {
+          "label": "technical.other:data_collection",
+          "name": "Data Collection",
+          "count": 1,
+          "rate": 0.002012072434607646
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 375,
+          "rate": 0.75
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 60,
+          "rate": 0.12
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 46,
+          "rate": 0.092
+        },
+        {
+          "label": "presentation.music",
+          "name": "Music",
+          "count": 28,
+          "rate": 0.056
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 26,
+          "rate": 0.052
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 23,
+          "rate": 0.046
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 15,
+          "rate": 0.03
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 15,
+          "rate": 0.03
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 14,
+          "rate": 0.028
+        },
+        {
+          "label": "narrative.story",
+          "name": "Story",
+          "count": 13,
+          "rate": 0.026
+        }
+      ]
+    },
+    "4286550": {
+      "name": "Keep on Mining! - Worlds",
+      "tier": "A",
+      "raw_reviews": 1824,
+      "raw_negative": 352,
+      "valid_negative": 254,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 103,
+          "rate": 0.40551181102362205
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 99,
+          "rate": 0.38976377952755903
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 81,
+          "rate": 0.3188976377952756
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 76,
+          "rate": 0.2992125984251969
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 55,
+          "rate": 0.21653543307086615
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 21,
+          "rate": 0.08267716535433071
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "count": 20,
+          "rate": 0.07874015748031496
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 12,
+          "rate": 0.047244094488188976
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 12,
+          "rate": 0.047244094488188976
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 11,
+          "rate": 0.04330708661417323
+        },
+        {
+          "label": "gameplay.itemization",
+          "name": "Itemization",
+          "count": 10,
+          "rate": 0.03937007874015748
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 10,
+          "rate": 0.03937007874015748
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 8,
+          "rate": 0.031496062992125984
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 3,
+          "rate": 0.011811023622047244
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 3,
+          "rate": 0.011811023622047244
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 2,
+          "rate": 0.007874015748031496
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 1,
+          "rate": 0.003937007874015748
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 1,
+          "rate": 0.003937007874015748
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 1,
+          "rate": 0.003937007874015748
+        },
+        {
+          "label": "accessibility.other:visual_effects_slider",
+          "name": "Visual Effects Slider",
+          "count": 1,
+          "rate": 0.003937007874015748
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 9,
+          "rate": 0.03543307086614173
+        },
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 4,
+          "rate": 0.015748031496062992
+        },
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 3,
+          "rate": 0.011811023622047244
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 1,
+          "rate": 0.003937007874015748
+        },
+        {
+          "label": "technical.stuttering",
+          "name": "Stuttering",
+          "count": 1,
+          "rate": 0.003937007874015748
+        },
+        {
+          "label": "technical.networking",
+          "name": "Networking",
+          "count": 1,
+          "rate": 0.003937007874015748
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 319,
+          "rate": 0.638
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 88,
+          "rate": 0.176
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 88,
+          "rate": 0.176
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 35,
+          "rate": 0.07
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 20,
+          "rate": 0.04
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 19,
+          "rate": 0.038
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 16,
+          "rate": 0.032
+        },
+        {
+          "label": "presentation.audio",
+          "name": "Audio",
+          "count": 15,
+          "rate": 0.03
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 12,
+          "rate": 0.024
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 12,
+          "rate": 0.024
+        }
+      ]
+    },
+    "3833760": {
+      "name": "You Know The Drill",
+      "tier": "A",
+      "raw_reviews": 982,
+      "raw_negative": 64,
+      "valid_negative": 50,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 24,
+          "rate": 0.48
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 19,
+          "rate": 0.38
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 10,
+          "rate": 0.2
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 7,
+          "rate": 0.14
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 7,
+          "rate": 0.14
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 6,
+          "rate": 0.12
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 5,
+          "rate": 0.1
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 3,
+          "rate": 0.06
+        },
+        {
+          "label": "gameplay.itemization",
+          "name": "Itemization",
+          "count": 2,
+          "rate": 0.04
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 2,
+          "rate": 0.04
+        },
+        {
+          "label": "narrative.ending",
+          "name": "Ending",
+          "count": 2,
+          "rate": 0.04
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 1,
+          "rate": 0.02
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "product.updates",
+          "name": "Updates",
+          "count": 2,
+          "rate": 0.04
+        },
+        {
+          "label": "content.enemy_variety",
+          "name": "Enemy Variety",
+          "count": 1,
+          "rate": 0.02
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 1,
+          "rate": 0.02
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 1,
+          "rate": 0.02
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 1,
+          "rate": 0.02
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 3,
+          "rate": 0.06
+        },
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 3,
+          "rate": 0.06
+        },
+        {
+          "label": "technical.stuttering",
+          "name": "Stuttering",
+          "count": 1,
+          "rate": 0.02
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 1,
+          "rate": 0.02
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 1,
+          "rate": 0.02
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 308,
+          "rate": 0.616
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 90,
+          "rate": 0.18
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 89,
+          "rate": 0.178
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 59,
+          "rate": 0.118
+        },
+        {
+          "label": "presentation.music",
+          "name": "Music",
+          "count": 44,
+          "rate": 0.088
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 35,
+          "rate": 0.07
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 32,
+          "rate": 0.064
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 30,
+          "rate": 0.06
+        },
+        {
+          "label": "product.developer_support",
+          "name": "Developer support",
+          "count": 20,
+          "rate": 0.04
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 15,
+          "rate": 0.03
+        }
+      ]
+    },
+    "3372980": {
+      "name": "Tower Wizard",
+      "tier": "A",
+      "raw_reviews": 8821,
+      "raw_negative": 278,
+      "valid_negative": 225,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 91,
+          "rate": 0.40444444444444444
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 71,
+          "rate": 0.31555555555555553
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 37,
+          "rate": 0.16444444444444445
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 31,
+          "rate": 0.13777777777777778
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 16,
+          "rate": 0.07111111111111111
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 14,
+          "rate": 0.06222222222222222
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 12,
+          "rate": 0.05333333333333334
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 12,
+          "rate": 0.05333333333333334
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 12,
+          "rate": 0.05333333333333334
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 10,
+          "rate": 0.044444444444444446
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 10,
+          "rate": 0.044444444444444446
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 10,
+          "rate": 0.044444444444444446
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 8,
+          "rate": 0.035555555555555556
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "count": 2,
+          "rate": 0.008888888888888889
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 2,
+          "rate": 0.008888888888888889
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 2,
+          "rate": 0.008888888888888889
+        },
+        {
+          "label": "narrative.ending",
+          "name": "Ending",
+          "count": 1,
+          "rate": 0.0044444444444444444
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 1,
+          "rate": 0.0044444444444444444
+        },
+        {
+          "label": "gameplay.combat",
+          "name": "Combat",
+          "count": 1,
+          "rate": 0.0044444444444444444
+        },
+        {
+          "label": "product.updates",
+          "name": "Updates",
+          "count": 1,
+          "rate": 0.0044444444444444444
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 9,
+          "rate": 0.04
+        },
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 6,
+          "rate": 0.02666666666666667
+        },
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 4,
+          "rate": 0.017777777777777778
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 3,
+          "rate": 0.013333333333333334
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 2,
+          "rate": 0.008888888888888889
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 334,
+          "rate": 0.668
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 121,
+          "rate": 0.242
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 84,
+          "rate": 0.168
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 80,
+          "rate": 0.16
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 76,
+          "rate": 0.152
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 54,
+          "rate": 0.108
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 40,
+          "rate": 0.08
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "count": 36,
+          "rate": 0.072
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 23,
+          "rate": 0.046
+        },
+        {
+          "label": "presentation.music",
+          "name": "Music",
+          "count": 22,
+          "rate": 0.044
+        }
+      ]
+    },
+    "4305480": {
+      "name": "IncreKnight",
+      "tier": "A",
+      "raw_reviews": 414,
+      "raw_negative": 45,
+      "valid_negative": 33,
+      "valid_positive": 231,
+      "complaints": [
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 11,
+          "rate": 0.3333333333333333
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 9,
+          "rate": 0.2727272727272727
+        },
+        {
+          "label": "gameplay.combat",
+          "name": "Combat",
+          "count": 6,
+          "rate": 0.18181818181818182
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 6,
+          "rate": 0.18181818181818182
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 5,
+          "rate": 0.15151515151515152
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 4,
+          "rate": 0.12121212121212122
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 4,
+          "rate": 0.12121212121212122
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 3,
+          "rate": 0.09090909090909091
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 3,
+          "rate": 0.09090909090909091
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "count": 2,
+          "rate": 0.06060606060606061
+        },
+        {
+          "label": "gameplay.boss_design",
+          "name": "Boss Design",
+          "count": 2,
+          "rate": 0.06060606060606061
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 2,
+          "rate": 0.06060606060606061
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 2,
+          "rate": 0.06060606060606061
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 2,
+          "rate": 0.06060606060606061
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "count": 1,
+          "rate": 0.030303030303030304
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 1,
+          "rate": 0.030303030303030304
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 1,
+          "rate": 0.030303030303030304
+        },
+        {
+          "label": "narrative.story",
+          "name": "Story",
+          "count": 1,
+          "rate": 0.030303030303030304
+        },
+        {
+          "label": "gameplay.level_design",
+          "name": "Run / level structure",
+          "count": 1,
+          "rate": 0.030303030303030304
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 1,
+          "rate": 0.030303030303030304
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 1,
+          "rate": 0.030303030303030304
+        },
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 1,
+          "rate": 0.030303030303030304
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 136,
+          "rate": 0.5887445887445888
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 58,
+          "rate": 0.2510822510822511
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 32,
+          "rate": 0.13852813852813853
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 30,
+          "rate": 0.12987012987012986
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 20,
+          "rate": 0.08658008658008658
+        },
+        {
+          "label": "gameplay.combat",
+          "name": "Combat",
+          "count": 19,
+          "rate": 0.08225108225108226
+        },
+        {
+          "label": "narrative.story",
+          "name": "Story",
+          "count": 14,
+          "rate": 0.06060606060606061
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 14,
+          "rate": 0.06060606060606061
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 13,
+          "rate": 0.05627705627705628
+        },
+        {
+          "label": "presentation.music",
+          "name": "Music",
+          "count": 13,
+          "rate": 0.05627705627705628
+        }
+      ]
+    }
+  },
+  "game_order": [
+    "4304930",
+    "3862670",
+    "3767740",
+    "3972320",
+    "3948120",
+    "4286550",
+    "3833760",
+    "3372980",
+    "4305480"
+  ],
+  "tiers": {
+    "S": {
+      "games": [
+        "4304930",
+        "3862670",
+        "3767740",
+        "3972320"
+      ],
+      "valid_negative": 432,
+      "valid_positive": 1997,
+      "complaints": [
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "rate": 0.4188683068640444,
+          "games": 4,
+          "count": 168
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "rate": 0.32261053361637126,
+          "games": 4,
+          "count": 137
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "rate": 0.2153626938398065,
+          "games": 4,
+          "count": 95
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "rate": 0.11622399869712693,
+          "games": 4,
+          "count": 46
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "rate": 0.11298801581418334,
+          "games": 4,
+          "count": 61
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "rate": 0.10114029471887144,
+          "games": 4,
+          "count": 45
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "rate": 0.09314173517981894,
+          "games": 4,
+          "count": 41
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "rate": 0.09123024631039828,
+          "games": 4,
+          "count": 44
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "rate": 0.07015933987764973,
+          "games": 4,
+          "count": 33
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "rate": 0.060622042328398885,
+          "games": 4,
+          "count": 24
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "rate": 0.047684381809196486,
+          "games": 4,
+          "count": 20
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "rate": 0.042690783857852056,
+          "games": 4,
+          "count": 20
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "rate": 0.039553218433407464,
+          "games": 4,
+          "count": 17
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "rate": 0.033243199227261495,
+          "games": 4,
+          "count": 12
+        },
+        {
+          "label": "gameplay.level_design",
+          "name": "Run / level structure",
+          "rate": 0.031806341772057115,
+          "games": 4,
+          "count": 15
+        }
+      ]
+    },
+    "A": {
+      "games": [
+        "3948120",
+        "4286550",
+        "3833760",
+        "3372980",
+        "4305480"
+      ],
+      "valid_negative": 1059,
+      "valid_positive": 2231,
+      "complaints": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "rate": 0.3140561059829109,
+          "games": 5,
+          "count": 347
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "rate": 0.2783395225404763,
+          "games": 5,
+          "count": 252
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "rate": 0.21343182806374555,
+          "games": 5,
+          "count": 189
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "rate": 0.17702668728508808,
+          "games": 5,
+          "count": 178
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "rate": 0.16782337355077734,
+          "games": 5,
+          "count": 212
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "rate": 0.1249570858700281,
+          "games": 4,
+          "count": 153
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "rate": 0.07319140933247621,
+          "games": 5,
+          "count": 59
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "rate": 0.06217029849501847,
+          "games": 5,
+          "count": 59
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "rate": 0.05824421435156714,
+          "games": 5,
+          "count": 56
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "rate": 0.05621655423673834,
+          "games": 5,
+          "count": 55
+        },
+        {
+          "label": "gameplay.combat",
+          "name": "Combat",
+          "rate": 0.04303030303030303,
+          "games": 3,
+          "count": 10
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta progression",
+          "rate": 0.03992093241865894,
+          "games": 3,
+          "count": 78
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "rate": 0.03987939023627168,
+          "games": 5,
+          "count": 36
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "rate": 0.03788131605188276,
+          "games": 4,
+          "count": 36
+        },
+        {
+          "label": "gameplay.itemization",
+          "name": "Itemization",
+          "rate": 0.03049377470581862,
+          "games": 5,
+          "count": 19
+        }
+      ]
+    }
+  },
+  "tier_comparison": [
+    {
+      "label": "content.content_amount",
+      "name": "Amount of content",
+      "S": 0.4188683068640444,
+      "A": 0.21343182806374555,
+      "difference": 0.20543647880029886
+    },
+    {
+      "label": "gameplay.core_loop",
+      "name": "Core loop",
+      "S": 0.32261053361637126,
+      "A": 0.3140561059829109,
+      "difference": 0.00855442763346037
+    },
+    {
+      "label": "gameplay.progression",
+      "name": "Progression",
+      "S": 0.2153626938398065,
+      "A": 0.2783395225404763,
+      "difference": -0.06297682870066978
+    },
+    {
+      "label": "gameplay.pacing",
+      "name": "Pacing",
+      "S": 0.042690783857852056,
+      "A": 0.17702668728508808,
+      "difference": -0.13433590342723603
+    },
+    {
+      "label": "gameplay.grind",
+      "name": "Grind",
+      "S": 0.11298801581418334,
+      "A": 0.16782337355077734,
+      "difference": -0.054835357736593995
+    },
+    {
+      "label": "gameplay.balance",
+      "name": "Balance",
+      "S": 0.07015933987764973,
+      "A": 0.1249570858700281,
+      "difference": -0.05479774599237837
+    },
+    {
+      "label": "product.value",
+      "name": "Value",
+      "S": 0.11622399869712693,
+      "A": 0.06217029849501847,
+      "difference": 0.054053700202108465
+    },
+    {
+      "label": "gameplay.difficulty",
+      "name": "Difficulty",
+      "S": 0.10114029471887144,
+      "A": 0.018120277218868767,
+      "difference": 0.08302001750000268
+    },
+    {
+      "label": "gameplay.meta_progression",
+      "name": "Meta progression",
+      "S": 0.09314173517981894,
+      "A": 0.03992093241865894,
+      "difference": 0.05322080276116
+    },
+    {
+      "label": "gameplay.build_variety",
+      "name": "Build variety",
+      "S": 0.09123024631039828,
+      "A": 0.03987939023627168,
+      "difference": 0.051350856074126594
+    },
+    {
+      "label": "content.content_variety",
+      "name": "Content variety",
+      "S": 0.039553218433407464,
+      "A": 0.07319140933247621,
+      "difference": -0.03363819089906875
+    },
+    {
+      "label": "gameplay.replayability",
+      "name": "Replayability",
+      "S": 0.060622042328398885,
+      "A": 0.05824421435156714,
+      "difference": 0.0023778279768317465
+    },
+    {
+      "label": "gameplay.controls",
+      "name": "Controls",
+      "S": 0.027662934010228304,
+      "A": 0.05621655423673834,
+      "difference": -0.028553620226510035
+    },
+    {
+      "label": "presentation.ux",
+      "name": "User experience",
+      "S": 0.047684381809196486,
+      "A": 0.02997198781650373,
+      "difference": 0.017712393992692754
+    },
+    {
+      "label": "gameplay.combat",
+      "name": "Combat",
+      "S": 0.014074024155566038,
+      "A": 0.04303030303030303,
+      "difference": -0.028956278874736993
+    },
+    {
+      "label": "content.endgame",
+      "name": "Endgame",
+      "S": 0.015832668793195108,
+      "A": 0.03788131605188276,
+      "difference": -0.022048647258687652
+    },
+    {
+      "label": "product.price",
+      "name": "Price",
+      "S": 0.033243199227261495,
+      "A": 0.008006717470175385,
+      "difference": 0.02523648175708611
+    },
+    {
+      "label": "gameplay.level_design",
+      "name": "Run / level structure",
+      "S": 0.031806341772057115,
+      "A": 0.006463692038495188,
+      "difference": 0.02534264973356193
+    },
+    {
+      "label": "gameplay.itemization",
+      "name": "Itemization",
+      "S": 0.010795454545454546,
+      "A": 0.03049377470581862,
+      "difference": -0.019698320160364075
+    },
+    {
+      "label": "presentation.ui",
+      "name": "Interface",
+      "S": 0.02263236516386998,
+      "A": 0.024062074186949424,
+      "difference": -0.0014297090230794424
+    },
+    {
+      "label": "product.missing_features",
+      "name": "Missing features",
+      "S": 0.0014619883040935672,
+      "A": 0.02341409180446554,
+      "difference": -0.021952103500371974
+    },
+    {
+      "label": "narrative.ending",
+      "name": "Ending",
+      "S": 0.018009763124199746,
+      "A": 0.02277133668150636,
+      "difference": -0.004761573557306616
+    },
+    {
+      "label": "narrative.choices",
+      "name": "Choices",
+      "S": 0.021358834827144686,
+      "A": 0.003957970042477084,
+      "difference": 0.017400864784667604
+    },
+    {
+      "label": "gameplay.crafting",
+      "name": "Crafting",
+      "S": 0.02112676056338028,
+      "A": 0.006060606060606061,
+      "difference": 0.01506615450277422
+    },
+    {
+      "label": "narrative.story",
+      "name": "Story",
+      "S": 0.015909090909090907,
+      "A": 0.020205485837957837,
+      "difference": -0.00429639492886693
+    },
+    {
+      "label": "gameplay.boss_design",
+      "name": "Boss Design",
+      "S": 0.01935971557682084,
+      "A": 0.012121212121212121,
+      "difference": 0.0072385034556087195
+    },
+    {
+      "label": "presentation.graphics",
+      "name": "Graphics",
+      "S": 0.01759515091612942,
+      "A": 0.013686648323889092,
+      "difference": 0.003908502592240327
+    },
+    {
+      "label": "gameplay.rng",
+      "name": "Rng",
+      "S": 0.016684941520467837,
+      "A": 0.014347502336855781,
+      "difference": 0.0023374391836120563
+    },
+    {
+      "label": "presentation.art_style",
+      "name": "Art style",
+      "S": 0.015992158426368953,
+      "A": 0.014392853262100241,
+      "difference": 0.001599305164268712
+    },
+    {
+      "label": "content.enemy_variety",
+      "name": "Enemy Variety",
+      "S": 0.013464308578745199,
+      "A": 0.004,
+      "difference": 0.009464308578745199
+    },
+    {
+      "label": "gameplay.enemy_design",
+      "name": "Enemy Design",
+      "S": 0.007042253521126761,
+      "A": 0.012121212121212121,
+      "difference": -0.0050789586000853605
+    },
+    {
+      "label": "content.biome_variety",
+      "name": "Biome Variety",
+      "S": 0.010339308578745198,
+      "A": 0.007937007874015748,
+      "difference": 0.0024023007047294497
+    },
+    {
+      "label": "presentation.music",
+      "name": "Music",
+      "S": 0.004586988304093567,
+      "A": 0.009634260506169123,
+      "difference": -0.005047272202075555
+    },
+    {
+      "label": "narrative.writing",
+      "name": "Writing",
+      "S": 0.0022727272727272726,
+      "A": 0.009329127072944306,
+      "difference": -0.007056399800217034
+    },
+    {
+      "label": "gameplay.puzzle_design",
+      "name": "Puzzle Design",
+      "S": 0.008972953216374268,
+      "A": 0.0,
+      "difference": 0.008972953216374268
+    },
+    {
+      "label": "technical.bugs",
+      "name": "Bugs",
+      "S": 0.0035211267605633804,
+      "A": 0.008895606359064272,
+      "difference": -0.005374479598500891
+    },
+    {
+      "label": "product.updates",
+      "name": "Updates",
+      "S": 0.0022727272727272726,
+      "A": 0.008475092982135234,
+      "difference": -0.006202365709407962
+    },
+    {
+      "label": "gameplay.mission_design",
+      "name": "Mission Design",
+      "S": 0.007309941520467836,
+      "A": 0.0,
+      "difference": 0.007309941520467836
+    },
+    {
+      "label": "technical.save_system",
+      "name": "Save system",
+      "S": 0.006007442849548112,
+      "A": 0.006736481883426543,
+      "difference": -0.0007290390338784303
+    },
+    {
+      "label": "narrative.worldbuilding",
+      "name": "Worldbuilding",
+      "S": 0.006007442849548112,
+      "A": 0.0,
+      "difference": 0.006007442849548112
+    },
+    {
+      "label": "product.developer_support",
+      "name": "Developer support",
+      "S": 0.0022727272727272726,
+      "A": 0.005977217636527829,
+      "difference": -0.003704490363800556
+    },
+    {
+      "label": "presentation.audio",
+      "name": "Audio",
+      "S": 0.003125,
+      "A": 0.004888888888888889,
+      "difference": -0.0017638888888888886
+    },
+    {
+      "label": "gameplay.movement",
+      "name": "Movement",
+      "S": 0.0,
+      "A": 0.004,
+      "difference": -0.004
+    },
+    {
+      "label": "technical.performance",
+      "name": "Performance",
+      "S": 0.00373471557682084,
+      "A": 0.0032685210123382462,
+      "difference": 0.00046619456448259355
+    },
+    {
+      "label": "content.quest_variety",
+      "name": "Quest Variety",
+      "S": 0.00373471557682084,
+      "A": 0.0004024144869215292,
+      "difference": 0.0033323010898993104
+    },
+    {
+      "label": "gameplay.weapon_variety",
+      "name": "Weapon Variety",
+      "S": 0.00373471557682084,
+      "A": 0.0,
+      "difference": 0.00373471557682084
+    },
+    {
+      "label": "product.early_access",
+      "name": "Early Access",
+      "S": 0.0022727272727272726,
+      "A": 0.003303375810418064,
+      "difference": -0.0010306485376907915
+    },
+    {
+      "label": "gameplay.other:gameplay_variety",
+      "name": "Gameplay Variety",
+      "S": 0.003125,
+      "A": 0.0,
+      "difference": 0.003125
+    },
+    {
+      "label": "presentation.animation",
+      "name": "Animation",
+      "S": 0.003125,
+      "A": 0.0020787049506135677,
+      "difference": 0.0010462950493864325
+    },
+    {
+      "label": "gameplay.other:idle_mechanics",
+      "name": "Idle Mechanics",
+      "S": 0.003125,
+      "A": 0.0,
+      "difference": 0.003125
+    },
+    {
+      "label": "product.other:marketing_accuracy",
+      "name": "Marketing Accuracy",
+      "S": 0.003125,
+      "A": 0.0,
+      "difference": 0.003125
+    },
+    {
+      "label": "gameplay.other:spawn_rate",
+      "name": "Spawn Rate",
+      "S": 0.0022727272727272726,
+      "A": 0.0,
+      "difference": 0.0022727272727272726
+    },
+    {
+      "label": "gameplay.exploration",
+      "name": "Exploration",
+      "S": 0.0022727272727272726,
+      "A": 0.0,
+      "difference": 0.0022727272727272726
+    },
+    {
+      "label": "gameplay.other:npc_interaction",
+      "name": "Npc Interaction",
+      "S": 0.0022727272727272726,
+      "A": 0.0,
+      "difference": 0.0022727272727272726
+    },
+    {
+      "label": "gameplay.other:mechanical_depth",
+      "name": "Mechanical Depth",
+      "S": 0.0022727272727272726,
+      "A": 0.0,
+      "difference": 0.0022727272727272726
+    },
+    {
+      "label": "accessibility.text_readability",
+      "name": "Text Readability",
+      "S": 0.0022727272727272726,
+      "A": 0.0015748031496062992,
+      "difference": 0.0006979241231209734
+    },
+    {
+      "label": "narrative.characters",
+      "name": "Characters",
+      "S": 0.0022727272727272726,
+      "A": 0.0,
+      "difference": 0.0022727272727272726
+    },
+    {
+      "label": "gameplay.other:offline_progress",
+      "name": "Offline Progress",
+      "S": 0.0,
+      "A": 0.0017777777777777779,
+      "difference": -0.0017777777777777779
+    },
+    {
+      "label": "technical.compatibility",
+      "name": "Compatibility",
+      "S": 0.0,
+      "A": 0.001693717862731947,
+      "difference": -0.001693717862731947
+    },
+    {
+      "label": "gameplay.other:automation",
+      "name": "Automation",
+      "S": 0.0,
+      "A": 0.0016096579476861169,
+      "difference": -0.0016096579476861169
+    },
+    {
+      "label": "gameplay.other:store_mechanics",
+      "name": "Store Mechanics",
+      "S": 0.0,
+      "A": 0.0015748031496062992,
+      "difference": -0.0015748031496062992
+    },
+    {
+      "label": "gameplay.other:overall_gameplay",
+      "name": "Overall Gameplay",
+      "S": 0.0014619883040935672,
+      "A": 0.0,
+      "difference": 0.0014619883040935672
+    },
+    {
+      "label": "technical.stuttering",
+      "name": "Stuttering",
+      "S": 0.0014619883040935672,
+      "A": 0.0,
+      "difference": 0.0014619883040935672
+    },
+    {
+      "label": "technical.crashes",
+      "name": "Crashes",
+      "S": 0.0014619883040935672,
+      "A": 0.0007874015748031496,
+      "difference": 0.0006745867292904176
+    },
+    {
+      "label": "presentation.other:immersion",
+      "name": "Immersion",
+      "S": 0.0014619883040935672,
+      "A": 0.0,
+      "difference": 0.0014619883040935672
+    },
+    {
+      "label": "product.other:store_tags",
+      "name": "Store Tags",
+      "S": 0.0,
+      "A": 0.0011898160617246788,
+      "difference": -0.0011898160617246788
+    },
+    {
+      "label": "gameplay.other:incremental_genre",
+      "name": "Incremental Genre",
+      "S": 0.0,
+      "A": 0.0008888888888888889,
+      "difference": -0.0008888888888888889
+    },
+    {
+      "label": "accessibility.other:localization",
+      "name": "Localization",
+      "S": 0.0,
+      "A": 0.0008888888888888889,
+      "difference": -0.0008888888888888889
+    },
+    {
+      "label": "product.other:trading_cards",
+      "name": "Trading Cards",
+      "S": 0.0,
+      "A": 0.0007874015748031496,
+      "difference": -0.0007874015748031496
+    },
+    {
+      "label": "presentation.other:visual_clarity",
+      "name": "Visual Clarity",
+      "S": 0.0,
+      "A": 0.0007874015748031496,
+      "difference": -0.0007874015748031496
+    },
+    {
+      "label": "gameplay.other:market_system",
+      "name": "Market System",
+      "S": 0.0,
+      "A": 0.0007874015748031496,
+      "difference": -0.0007874015748031496
+    },
+    {
+      "label": "content.other:game_length",
+      "name": "Game Length",
+      "S": 0.0,
+      "A": 0.0007874015748031496,
+      "difference": -0.0007874015748031496
+    },
+    {
+      "label": "accessibility.colorblind_support",
+      "name": "Colorblind Support",
+      "S": 0.0,
+      "A": 0.0007874015748031496,
+      "difference": -0.0007874015748031496
+    },
+    {
+      "label": "accessibility.other:visual_effects_slider",
+      "name": "Visual Effects Slider",
+      "S": 0.0,
+      "A": 0.0007874015748031496,
+      "difference": -0.0007874015748031496
+    },
+    {
+      "label": "presentation.other:headache",
+      "name": "Headache",
+      "S": 0.0,
+      "A": 0.0007874015748031496,
+      "difference": -0.0007874015748031496
+    },
+    {
+      "label": "technical.other:data_collection",
+      "name": "Data Collection",
+      "S": 0.0,
+      "A": 0.0004024144869215292,
+      "difference": -0.0004024144869215292
+    },
+    {
+      "label": "multiplayer.other:toxic_servers",
+      "name": "Toxic Servers",
+      "S": 0.0,
+      "A": 0.0004024144869215292,
+      "difference": -0.0004024144869215292
+    },
+    {
+      "label": "product.other:store_tagging",
+      "name": "Store Tagging",
+      "S": 0.0,
+      "A": 0.0004024144869215292,
+      "difference": -0.0004024144869215292
+    },
+    {
+      "label": "accessibility.other:repetitive_strain",
+      "name": "Repetitive Strain",
+      "S": 0.0,
+      "A": 0.0004024144869215292,
+      "difference": -0.0004024144869215292
+    },
+    {
+      "label": "content.other:achievements",
+      "name": "Achievements",
+      "S": 0.0,
+      "A": 0.0004024144869215292,
+      "difference": -0.0004024144869215292
+    },
+    {
+      "label": "gameplay.other:achievements",
+      "name": "Achievements",
+      "S": 0.0,
+      "A": 0.0004024144869215292,
+      "difference": -0.0004024144869215292
+    },
+    {
+      "label": "accessibility.other:wrist_strain",
+      "name": "Wrist Strain",
+      "S": 0.0,
+      "A": 0.0004024144869215292,
+      "difference": -0.0004024144869215292
+    },
+    {
+      "label": "gameplay.other:scratchcard_variety",
+      "name": "Scratchcard Variety",
+      "S": 0.0,
+      "A": 0.0004024144869215292,
+      "difference": -0.0004024144869215292
+    }
+  ]
+}

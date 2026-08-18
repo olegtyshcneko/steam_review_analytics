@@ -28,7 +28,8 @@ multiplayer-comment labels must use `multiplayer.*`. Complaints, praises, and
 feature requests may use any suitable canonical category.
 
 Be compact. Keep every normalized statement to 12 words or fewer. Do not explain
-the extraction and do not repeat the review text. For batched input, return
+the extraction and do not repeat the review text. Normalize statements and novel
+topics into English even when the review is written in another language. For batched input, return
 exactly one item per supplied recommendation_id in the original order. Batched
 output uses the compact field names defined by compact_field_legend; do not
 expand those keys.

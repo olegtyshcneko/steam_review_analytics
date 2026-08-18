@@ -1,0 +1,1942 @@
+{
+  "generated_at": "2026-08-16T12:42:46.105186+00:00",
+  "model": "google/gemini-3.7-flash",
+  "coverage": {
+    "selected": 1669,
+    "valid": 1667,
+    "negative_selected": 669,
+    "negative_valid": 667,
+    "positive_selected": 1000,
+    "positive_valid": 1000,
+    "reported_cost_usd": 0.65383775625,
+    "languages": 17
+  },
+  "methodology": {
+    "seed": 42,
+    "negative": "all reviews with at least 40 characters and four alphabetic tokens",
+    "positive": "deterministic SHA-256 sample of 500 eligible reviews per game",
+    "language_policy": "all Steam languages; model normalizes statements and topics into English"
+  },
+  "games": {
+    "2666510": {
+      "name": "Rusty's Retirement",
+      "raw_reviews": 14766,
+      "raw_negative": 485,
+      "raw_positive": 14281,
+      "selected_negative": 296,
+      "valid_negative": 296,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 107,
+          "rate": 0.3614864864864865
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 74,
+          "rate": 0.25
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 59,
+          "rate": 0.19932432432432431
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 41,
+          "rate": 0.13851351351351351
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 35,
+          "rate": 0.11824324324324324
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 26,
+          "rate": 0.08783783783783784
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 24,
+          "rate": 0.08108108108108109
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 23,
+          "rate": 0.0777027027027027
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 21,
+          "rate": 0.07094594594594594
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 20,
+          "rate": 0.06756756756756757
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 15,
+          "rate": 0.05067567567567568
+        },
+        {
+          "label": "product.missing_features",
+          "name": "Missing features",
+          "count": 13,
+          "rate": 0.04391891891891892
+        },
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 12,
+          "rate": 0.04054054054054054
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "count": 12,
+          "rate": 0.04054054054054054
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 7,
+          "rate": 0.02364864864864865
+        }
+      ],
+      "complaint_examples": {
+        "gameplay.pacing": [
+          "The start of the game is very slow and aimless.",
+          "Pacing is off; lacks offline progression for long absences."
+        ],
+        "gameplay.progression": [
+          "Lacks scaling depth and incentive to explore all options",
+          "Worlds are completely separated without easy switching or offline progression."
+        ],
+        "gameplay.core_loop": [
+          "Requires too much active maintenance for an idle game.",
+          "Gameplay involves minimal interaction and excessive waiting."
+        ],
+        "narrative.story": [
+          "Lacks story elements to immerse the player."
+        ],
+        "presentation.audio": [
+          "Store preview video audio is annoyingly loud."
+        ],
+        "product.updates": [
+          "New update adds grind that reduces enjoyment.",
+          "Developers have not provided an update to fix transparency issues."
+        ],
+        "content.content_amount": [
+          "Finished all game content in only 22 hours.",
+          "Game content is completely finished in about three days."
+        ],
+        "gameplay.grind": [
+          "Winter update added RNG grind for NPC upgrades on cooldowns.",
+          "Obtaining all achievements is an extremely annoying and boring grind."
+        ],
+        "gameplay.build_variety": [
+          "Only customization variance is structure placement.",
+          "Bulky machine sizes overly restrict farm layout options."
+        ],
+        "gameplay.meta_progression": [
+          "Leaving game running idle provides no practical benefit for accumulated resources.",
+          "Lacks incremental depth or New Game Plus mechanics."
+        ],
+        "gameplay.balance": [
+          "Only one auto-planting NPC exists, capping automation throughput.",
+          "Machine upgrades excessively multiply maintenance costs without matching crop upgrades."
+        ],
+        "gameplay.difficulty": [
+          "Additional maps add frustrating player penalties without rewarding counters.",
+          "Requires no skill."
+        ],
+        "presentation.ux": [
+          "Confusing UI icons and lack of affordability indicators",
+          "Poor UI and lack of explanations make initial gameplay confusing."
+        ],
+        "content.endgame": [
+          "Almost nothing left to do after completion besides collecting poop.",
+          "Abrupt lack of endgame systems or sinks for surplus resources."
+        ],
+        "technical.performance": [
+          "Takes surprisingly high performance resources for its graphical fidelity.",
+          "Excessive system resource consumption prevents multitasking."
+        ],
+        "content.content_variety": [
+          "Additional maps only offer different scenery with identical unlock paths.",
+          "Unlocking nearly everything on the first map makes subsequent gameplay repetitive."
+        ],
+        "gameplay.replayability": [
+          "No appeal to start new farms since they only add obstacles.",
+          "No incentive to replay or play additional unlocked maps."
+        ],
+        "presentation.ui": [
+          "Lacks statistical charts to track efficiency and machine upkeep status.",
+          "Provides little guidance, making mistakes very costly in time."
+        ],
+        "presentation.art_style": [
+          "Automated bush system creatures look unattractive and confusing.",
+          "NPC visual design looks ugly."
+        ],
+        "product.value": [
+          "Disappointing value even if it were free.",
+          "Other idle games offer better experience for cheaper."
+        ],
+        "technical.save_system": [
+          "Single save slot causes decorations and constructions to reset on new maps.",
+          "Autosave failed, causing loss of nearly 3 hours of progress."
+        ],
+        "gameplay.other:time_sink": [
+          "The game consumes too much time."
+        ],
+        "gameplay.movement": [
+          "Character AI prioritizes task order inefficiently instead of proximity.",
+          "Bots move too slowly even with max speed upgrades."
+        ],
+        "gameplay.controls": [
+          "Cannot nudge buildings by one tile without moving them far away first.",
+          "Auto-planting bot cannot be configured and interferes with manual planting."
+        ],
+        "gameplay.level_design": [
+          "Plots of land are far too small for decorations and NPC buildings.",
+          "Cannot remove placed animals or buildings from the farm."
+        ],
+        "product.price": [
+          "Not recommended at the current price due to lack of content."
+        ],
+        "product.developer_support": [
+          "Developers have not resolved reported cloud saving issues.",
+          "No bug fixes released after months of waiting."
+        ],
+        "product.missing_features": [
+          "Missing Russian language support despite supporting many other languages.",
+          "No full screen option is available."
+        ],
+        "content.biome_variety": [
+          "New maps lack visual changes for crops and buildings.",
+          "New maps lack distinctive gameplay and feel repetitive."
+        ],
+        "presentation.graphics": [
+          "The game's visual design is unattractive.",
+          "Visuals are ugly retro pixel art."
+        ],
+        "technical.bugs": [
+          "Moving the game to another display makes it disappear."
+        ],
+        "product.early_access": [
+          "Feels incomplete, like an animated wallpaper that should be Early Access."
+        ],
+        "gameplay.other:automation_behavior": [
+          "Splunk bot only plants seeds when all plot tiles are empty."
+        ],
+        "technical.compatibility": [
+          "Black void fills window instead of transparency on Linux via Proton.",
+          "Overlay feature does not work on Linux."
+        ],
+        "gameplay.rng": [
+          "Too much randomness in item/resource placement."
+        ],
+        "accessibility.other:screen_scaling": [
+          "Zoom features only reach one-fourth of the screen, staying too tiny."
+        ],
+        "gameplay.other:farm_customization": [
+          "Placed animals cannot be removed.",
+          "Farm layout cannot be changed once chosen."
+        ],
+        "gameplay.other:building_mechanics": [
+          "Animal pens cannot be removed after placement.",
+          "Accidental building deletion is permanent with no refund or recovery."
+        ],
+        "presentation.music": [
+          "Audio is distracting for an idle game and hard to toggle.",
+          "Lacks sufficient built-in background music."
+        ],
+        "technical.other:cursor_lock": [
+          "Cursor is not locked, causing issues when multitasking."
+        ],
+        "technical.crashes": [
+          "Game crashes too often on macOS to be playable."
+        ],
+        "presentation.animation": [
+          "Character animations lack variety and interest."
+        ],
+        "gameplay.other:character_ai": [
+          "Character AI is painful to watch."
+        ],
+        "gameplay.other:automation": [
+          "Automation mechanics feel sloppy, confusing, and delayed."
+        ],
+        "gameplay.other:twitch_integration": [
+          "Twitch integration breaks mouse containment across monitors during other fullscreen games."
+        ],
+        "narrative.choices": [
+          "There are no meaningful decisions to make."
+        ]
+      },
+      "negative_aspects": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 116,
+          "rate": 0.3918918918918919
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 75,
+          "rate": 0.2533783783783784
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 70,
+          "rate": 0.23648648648648649
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 42,
+          "rate": 0.14189189189189189
+        },
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 37,
+          "rate": 0.125
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 37,
+          "rate": 0.125
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 29,
+          "rate": 0.09797297297297297
+        },
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 28,
+          "rate": 0.0945945945945946
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 25,
+          "rate": 0.08445945945945946
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 24,
+          "rate": 0.08108108108108109
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 22,
+          "rate": 0.07432432432432433
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 21,
+          "rate": 0.07094594594594594
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 19,
+          "rate": 0.06418918918918919
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 18,
+          "rate": 0.060810810810810814
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 16,
+          "rate": 0.05405405405405406
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "product.missing_features",
+          "name": "Missing features",
+          "count": 10,
+          "rate": 0.033783783783783786
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 7,
+          "rate": 0.02364864864864865
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 5,
+          "rate": 0.016891891891891893
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 4,
+          "rate": 0.013513513513513514
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 4,
+          "rate": 0.013513513513513514
+        },
+        {
+          "label": "gameplay.controls",
+          "name": "Controls",
+          "count": 3,
+          "rate": 0.010135135135135136
+        },
+        {
+          "label": "product.updates",
+          "name": "Updates",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "presentation.music",
+          "name": "Music",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 1,
+          "rate": 0.0033783783783783786
+        },
+        {
+          "label": "gameplay.exploration",
+          "name": "Exploration",
+          "count": 1,
+          "rate": 0.0033783783783783786
+        },
+        {
+          "label": "gameplay.crafting",
+          "name": "Crafting",
+          "count": 1,
+          "rate": 0.0033783783783783786
+        },
+        {
+          "label": "gameplay.other:building_mechanics",
+          "name": "Building Mechanics",
+          "count": 1,
+          "rate": 0.0033783783783783786
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 36,
+          "rate": 0.12162162162162163
+        },
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 28,
+          "rate": 0.0945945945945946
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 17,
+          "rate": 0.057432432432432436
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 13,
+          "rate": 0.04391891891891892
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 12,
+          "rate": 0.04054054054054054
+        },
+        {
+          "label": "technical.stuttering",
+          "name": "Stuttering",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "technical.other:storage_requirement",
+          "name": "Storage Requirement",
+          "count": 1,
+          "rate": 0.0033783783783783786
+        },
+        {
+          "label": "technical.other:cursor_lock",
+          "name": "Cursor Lock",
+          "count": 1,
+          "rate": 0.0033783783783783786
+        },
+        {
+          "label": "technical.other:ransomware_alert",
+          "name": "Ransomware Alert",
+          "count": 1,
+          "rate": 0.0033783783783783786
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 401,
+          "rate": 0.802
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 91,
+          "rate": 0.182
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 51,
+          "rate": 0.102
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 36,
+          "rate": 0.072
+        },
+        {
+          "label": "presentation.music",
+          "name": "Music",
+          "count": 23,
+          "rate": 0.046
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 21,
+          "rate": 0.042
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 18,
+          "rate": 0.036
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 18,
+          "rate": 0.036
+        },
+        {
+          "label": "narrative.characters",
+          "name": "Characters",
+          "count": 16,
+          "rate": 0.032
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 13,
+          "rate": 0.026
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 12,
+          "rate": 0.024
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 11,
+          "rate": 0.022
+        }
+      ],
+      "positive_aspects": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 399,
+          "rate": 0.798
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 96,
+          "rate": 0.192
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 58,
+          "rate": 0.116
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 37,
+          "rate": 0.074
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 24,
+          "rate": 0.048
+        },
+        {
+          "label": "presentation.music",
+          "name": "Music",
+          "count": 23,
+          "rate": 0.046
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 23,
+          "rate": 0.046
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 19,
+          "rate": 0.038
+        },
+        {
+          "label": "narrative.characters",
+          "name": "Characters",
+          "count": 17,
+          "rate": 0.034
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 15,
+          "rate": 0.03
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 12,
+          "rate": 0.024
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 11,
+          "rate": 0.022
+        }
+      ],
+      "complaint_categories": [
+        {
+          "label": "gameplay",
+          "name": "Gameplay",
+          "count": 191,
+          "rate": 0.6452702702702703
+        },
+        {
+          "label": "content",
+          "name": "Content",
+          "count": 91,
+          "rate": 0.30743243243243246
+        },
+        {
+          "label": "presentation",
+          "name": "Presentation",
+          "count": 69,
+          "rate": 0.23310810810810811
+        },
+        {
+          "label": "product",
+          "name": "Product",
+          "count": 30,
+          "rate": 0.10135135135135136
+        },
+        {
+          "label": "technical",
+          "name": "Technical",
+          "count": 25,
+          "rate": 0.08445945945945946
+        },
+        {
+          "label": "narrative",
+          "name": "Narrative",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "accessibility",
+          "name": "Accessibility",
+          "count": 1,
+          "rate": 0.0033783783783783786
+        }
+      ],
+      "discoveries": [
+        {
+          "label": "gameplay.other:building_mechanics",
+          "name": "Building Mechanics",
+          "count": 7,
+          "rate": 0.02364864864864865
+        },
+        {
+          "label": "gameplay.other:farm_customization",
+          "name": "Farm Customization",
+          "count": 3,
+          "rate": 0.010135135135135136
+        },
+        {
+          "label": "technical.other:cursor_lock",
+          "name": "Cursor Lock",
+          "count": 3,
+          "rate": 0.010135135135135136
+        },
+        {
+          "label": "gameplay.other:time_sink",
+          "name": "Time Sink",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "technical.other:storage_requirement",
+          "name": "Storage Requirement",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "gameplay.other:automation_behavior",
+          "name": "Automation Behavior",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "accessibility.other:screen_scaling",
+          "name": "Screen Scaling",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "accessibility.other:localization",
+          "name": "Localization",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "content.other:animals",
+          "name": "Animals",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "gameplay.other:overall_gameplay",
+          "name": "Overall Gameplay",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "gameplay.other:character_ai",
+          "name": "Character Ai",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "gameplay.other:automation",
+          "name": "Automation",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "gameplay.other:twitch_integration",
+          "name": "Twitch Integration",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "technical.other:ransomware_alert",
+          "name": "Ransomware Alert",
+          "count": 2,
+          "rate": 0.006756756756756757
+        },
+        {
+          "label": "gameplay.other:game_concept",
+          "name": "Game Concept",
+          "count": 2,
+          "rate": 0.006756756756756757
+        }
+      ],
+      "sentiment": {
+        "negative": {
+          "negative": 235,
+          "mixed": 57,
+          "neutral": 3,
+          "positive": 1
+        },
+        "positive": {
+          "positive": 469,
+          "mixed": 26,
+          "neutral": 4,
+          "negative": 1
+        }
+      }
+    },
+    "1473350": {
+      "name": "(the) Gnorp Apologue",
+      "raw_reviews": 9904,
+      "raw_negative": 511,
+      "raw_positive": 9393,
+      "selected_negative": 373,
+      "valid_negative": 371,
+      "valid_positive": 500,
+      "complaints": [
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 116,
+          "rate": 0.31266846361185985
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 104,
+          "rate": 0.2803234501347709
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 65,
+          "rate": 0.1752021563342318
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 63,
+          "rate": 0.16981132075471697
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 59,
+          "rate": 0.15902964959568733
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta Progression",
+          "count": 52,
+          "rate": 0.14016172506738545
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 50,
+          "rate": 0.1347708894878706
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 29,
+          "rate": 0.07816711590296496
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 26,
+          "rate": 0.07008086253369272
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 25,
+          "rate": 0.0673854447439353
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 21,
+          "rate": 0.05660377358490566
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 19,
+          "rate": 0.05121293800539083
+        },
+        {
+          "label": "content.endgame",
+          "name": "Endgame",
+          "count": 11,
+          "rate": 0.029649595687331536
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 11,
+          "rate": 0.029649595687331536
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 10,
+          "rate": 0.026954177897574125
+        }
+      ],
+      "complaint_examples": {
+        "gameplay.pacing": [
+          "Long waiting periods between meaningful choices.",
+          "Requires excessive idle time early on due to high upgrade costs."
+        ],
+        "gameplay.progression": [
+          "Unsuccessful builds waste hours without rewarding talent points.",
+          "Linear shard growth and heavy resource bottlenecks prevent exponential scaling."
+        ],
+        "gameplay.core_loop": [
+          "Strategic excitement diminished by the end of the game.",
+          "Gameplay itself feels bad for an incremental game."
+        ],
+        "content.other:offline_progression": [
+          "Lacks offline progression time."
+        ],
+        "narrative.story": [
+          "Lacks a strong story to keep the player invested.",
+          "Reviewer strongly dislikes the game."
+        ],
+        "presentation.audio": [
+          "Sound design and music add little to the atmosphere.",
+          "Sound and music are not notable."
+        ],
+        "product.updates": [
+          "Game stopped working after an update.",
+          "Developer promised balance changes months ago but never delivered significant updates."
+        ],
+        "content.content_amount": [
+          "Lacks content for an idle game at this price.",
+          "Lacks substantial content despite long idling times."
+        ],
+        "gameplay.grind": [
+          "Acquiring prestige points takes far too long.",
+          "The game devolves into a brutal, tedious grind after a few hours."
+        ],
+        "gameplay.build_variety": [
+          "Progress relies on finding one strict correct build per stage.",
+          "Only a few builds are viable, creating illusion of choice."
+        ],
+        "gameplay.meta_progression": [
+          "Prestige points are limited and provide dubious upgrade options.",
+          "Resets suffer from severe diminishing returns."
+        ],
+        "gameplay.balance": [
+          "Too many upgrade options feature harsh downsides.",
+          "Many upgrades are traps and punish player experimentation."
+        ],
+        "gameplay.difficulty": [
+          "Irreversible upgrade mistakes cause stressful resets and analysis paralysis.",
+          "Gameplay is overly punishing for non-intuitive builds."
+        ],
+        "presentation.ux": [
+          "Key mechanics are not usefully explained.",
+          "Compression events and damage/collection mechanics are confusingly presented."
+        ],
+        "content.endgame": [
+          "Final talent tree is inaccessible outside infinite or speedrun modes.",
+          "Late game fun diminishes due to rigid numerical thresholds."
+        ],
+        "content.content_variety": [
+          "Little content variety after the initial few hours.",
+          "Lacks variety to differentiate itself among clickers."
+        ],
+        "gameplay.replayability": [
+          "Replay value is low due to limited choices and speedrun focus.",
+          "Low replay value once the correct upgrade synergy combination is found."
+        ],
+        "presentation.ui": [
+          "Too many numbers and stats are hidden.",
+          "The game lacks sufficient detail to accurately min-max builds."
+        ],
+        "presentation.art_style": [
+          "Overly white visual palette risks OLED screen burn-in while idling.",
+          "Art style is boring, minimal, and feels low budget."
+        ],
+        "product.value": [
+          "Not worth the purchase price.",
+          "Other idle games offer more depth from the same base concept."
+        ],
+        "gameplay.controls": [
+          "Navigating across the wide 2D plane feels tedious and uncomfortable.",
+          "Clicking on the top of the snow to move it feels frustrating."
+        ],
+        "gameplay.level_design": [
+          "Unused space on the map feels like wasted potential.",
+          "Level design is overly strict and tedious."
+        ],
+        "product.price": [
+          "Feels overpriced and artificially lengthened.",
+          "The game is way too overpriced."
+        ],
+        "product.developer_support": [
+          "Workaround to run the game is pinned in community tab instead of fixed.",
+          "Startup issue has persisted for quite a while without a developer fix."
+        ],
+        "product.missing_features": [
+          "Does not feature offline progress.",
+          "Lacks offline AFK progression entirely."
+        ],
+        "presentation.graphics": [
+          "Pixel art graphics are inferior compared to genre competitors.",
+          "Not a whole lot going on visually."
+        ],
+        "technical.bugs": [
+          "Game launches into a blank screen with only audio playing.",
+          "Clicking window controls accidentally clicks through to background windows."
+        ],
+        "presentation.other:game_personality": [
+          "The game does not have a lot of personality."
+        ],
+        "narrative.ending": [
+          "The ending finale is underwhelming, offering only a timed mode.",
+          "The ending is anti-climactic."
+        ],
+        "gameplay.other:anti_cheat_penalty": [
+          "Permanent penalty for auto-clicker use disables prestige point gain."
+        ],
+        "gameplay.weapon_variety": [
+          "Forced to repeatedly use the same top-performing weapon.",
+          "Severe weapon imbalance makes most weapons useless except one."
+        ],
+        "gameplay.other:tutorial": [
+          "Lacks adequate tutorials or strategic guidance.",
+          "Unhelpful tutorial pop-ups appear constantly and cannot be disabled."
+        ],
+        "gameplay.other:strategic_depth": [
+          "Lacks strategic depth."
+        ],
+        "gameplay.rng": [
+          "Early progress feels overly reliant on luck.",
+          "Buff timing is uncontrollable, leading to unstable output."
+        ],
+        "presentation.music": [
+          "8-bit music becomes repetitive during long background idle sessions.",
+          "Music gets annoying over time."
+        ],
+        "technical.crashes": [
+          "Game constantly crashes on startup on Linux."
+        ],
+        "presentation.animation": [
+          "Reset animation is excessively long and unskippable."
+        ],
+        "gameplay.other:breaktimes": [
+          "Issues with breaktimes need to be reworked."
+        ],
+        "gameplay.other:drone_mechanic": [
+          "The drone mechanic is extremely frustrating."
+        ],
+        "content.other:achievements": [
+          "The achievements are somewhat unenjoyable."
+        ],
+        "gameplay.other:offline_progression": [
+          "There is no offline mode.",
+          "There is no offline idle progression."
+        ],
+        "gameplay.other:depth": [
+          "Lacks depth expected from an incremental game.",
+          "Wished the game had more overall depth."
+        ],
+        "gameplay.other:game_systems": [
+          "The game systems are unclear."
+        ],
+        "narrative.writing": [
+          "Trait descriptions are written ambiguously."
+        ]
+      },
+      "negative_aspects": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 122,
+          "rate": 0.3288409703504043
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 121,
+          "rate": 0.3261455525606469
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 73,
+          "rate": 0.1967654986522911
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 67,
+          "rate": 0.18059299191374664
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 65,
+          "rate": 0.1752021563342318
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta Progression",
+          "count": 59,
+          "rate": 0.15902964959568733
+        },
+        {
+          "label": "gameplay.balance",
+          "name": "Balance",
+          "count": 53,
+          "rate": 0.14285714285714285
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 38,
+          "rate": 0.10242587601078167
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 29,
+          "rate": 0.07816711590296496
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 26,
+          "rate": 0.07008086253369272
+        },
+        {
+          "label": "presentation.ui",
+          "name": "Interface",
+          "count": 25,
+          "rate": 0.0673854447439353
+        },
+        {
+          "label": "gameplay.grind",
+          "name": "Grind",
+          "count": 24,
+          "rate": 0.0646900269541779
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 18,
+          "rate": 0.04851752021563342
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 16,
+          "rate": 0.0431266846361186
+        },
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 13,
+          "rate": 0.03504043126684636
+        }
+      ],
+      "feature_requests": [
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 6,
+          "rate": 0.016172506738544475
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 5,
+          "rate": 0.013477088948787063
+        },
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 3,
+          "rate": 0.008086253369272238
+        },
+        {
+          "label": "presentation.ux",
+          "name": "User experience",
+          "count": 3,
+          "rate": 0.008086253369272238
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "product.missing_features",
+          "name": "Missing features",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "content.content_variety",
+          "name": "Content variety",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta Progression",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 1,
+          "rate": 0.0026954177897574125
+        },
+        {
+          "label": "product.updates",
+          "name": "Updates",
+          "count": 1,
+          "rate": 0.0026954177897574125
+        },
+        {
+          "label": "gameplay.other:anti_cheat_penalty",
+          "name": "Anti Cheat Penalty",
+          "count": 1,
+          "rate": 0.0026954177897574125
+        }
+      ],
+      "technical_issues": [
+        {
+          "label": "technical.crashes",
+          "name": "Crashes",
+          "count": 13,
+          "rate": 0.03504043126684636
+        },
+        {
+          "label": "technical.bugs",
+          "name": "Bugs",
+          "count": 11,
+          "rate": 0.029649595687331536
+        },
+        {
+          "label": "technical.compatibility",
+          "name": "Compatibility",
+          "count": 8,
+          "rate": 0.0215633423180593
+        },
+        {
+          "label": "technical.save_system",
+          "name": "Save system",
+          "count": 7,
+          "rate": 0.018867924528301886
+        },
+        {
+          "label": "technical.performance",
+          "name": "Performance",
+          "count": 3,
+          "rate": 0.008086253369272238
+        }
+      ],
+      "positive_drivers": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 294,
+          "rate": 0.588
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 90,
+          "rate": 0.18
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 63,
+          "rate": 0.126
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 45,
+          "rate": 0.09
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 38,
+          "rate": 0.076
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 34,
+          "rate": 0.068
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 25,
+          "rate": 0.05
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 25,
+          "rate": 0.05
+        },
+        {
+          "label": "presentation.animation",
+          "name": "Animation",
+          "count": 25,
+          "rate": 0.05
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 22,
+          "rate": 0.044
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 21,
+          "rate": 0.042
+        },
+        {
+          "label": "gameplay.pacing",
+          "name": "Pacing",
+          "count": 19,
+          "rate": 0.038
+        }
+      ],
+      "positive_aspects": [
+        {
+          "label": "gameplay.core_loop",
+          "name": "Core loop",
+          "count": 299,
+          "rate": 0.598
+        },
+        {
+          "label": "presentation.art_style",
+          "name": "Art style",
+          "count": 93,
+          "rate": 0.186
+        },
+        {
+          "label": "gameplay.build_variety",
+          "name": "Build variety",
+          "count": 65,
+          "rate": 0.13
+        },
+        {
+          "label": "gameplay.progression",
+          "name": "Progression",
+          "count": 50,
+          "rate": 0.1
+        },
+        {
+          "label": "content.content_amount",
+          "name": "Amount of content",
+          "count": 40,
+          "rate": 0.08
+        },
+        {
+          "label": "product.value",
+          "name": "Value",
+          "count": 38,
+          "rate": 0.076
+        },
+        {
+          "label": "product.price",
+          "name": "Price",
+          "count": 32,
+          "rate": 0.064
+        },
+        {
+          "label": "presentation.graphics",
+          "name": "Graphics",
+          "count": 28,
+          "rate": 0.056
+        },
+        {
+          "label": "presentation.animation",
+          "name": "Animation",
+          "count": 26,
+          "rate": 0.052
+        },
+        {
+          "label": "gameplay.replayability",
+          "name": "Replayability",
+          "count": 22,
+          "rate": 0.044
+        },
+        {
+          "label": "gameplay.difficulty",
+          "name": "Difficulty",
+          "count": 21,
+          "rate": 0.042
+        },
+        {
+          "label": "gameplay.meta_progression",
+          "name": "Meta Progression",
+          "count": 20,
+          "rate": 0.04
+        }
+      ],
+      "complaint_categories": [
+        {
+          "label": "gameplay",
+          "name": "Gameplay",
+          "count": 304,
+          "rate": 0.8194070080862533
+        },
+        {
+          "label": "content",
+          "name": "Content",
+          "count": 83,
+          "rate": 0.22371967654986524
+        },
+        {
+          "label": "presentation",
+          "name": "Presentation",
+          "count": 57,
+          "rate": 0.15363881401617252
+        },
+        {
+          "label": "product",
+          "name": "Product",
+          "count": 39,
+          "rate": 0.10512129380053908
+        },
+        {
+          "label": "narrative",
+          "name": "Narrative",
+          "count": 10,
+          "rate": 0.026954177897574125
+        },
+        {
+          "label": "technical",
+          "name": "Technical",
+          "count": 3,
+          "rate": 0.008086253369272238
+        }
+      ],
+      "discoveries": [
+        {
+          "label": "gameplay.other:depth",
+          "name": "Depth",
+          "count": 8,
+          "rate": 0.0215633423180593
+        },
+        {
+          "label": "gameplay.other:tutorial",
+          "name": "Tutorial",
+          "count": 6,
+          "rate": 0.016172506738544475
+        },
+        {
+          "label": "gameplay.other:offline_progression",
+          "name": "Offline Progression",
+          "count": 4,
+          "rate": 0.01078167115902965
+        },
+        {
+          "label": "gameplay.other:anti_cheat_penalty",
+          "name": "Anti Cheat Penalty",
+          "count": 3,
+          "rate": 0.008086253369272238
+        },
+        {
+          "label": "content.other:offline_progression",
+          "name": "Offline Progression",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "presentation.other:game_personality",
+          "name": "Game Personality",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "gameplay.other:strategic_depth",
+          "name": "Strategic Depth",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "gameplay.other:breaktimes",
+          "name": "Breaktimes",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "gameplay.other:drone_mechanic",
+          "name": "Drone Mechanic",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "content.other:achievements",
+          "name": "Achievements",
+          "count": 2,
+          "rate": 0.005390835579514825
+        },
+        {
+          "label": "gameplay.other:game_systems",
+          "name": "Game Systems",
+          "count": 2,
+          "rate": 0.005390835579514825
+        }
+      ],
+      "sentiment": {
+        "negative": {
+          "mixed": 117,
+          "negative": 247,
+          "neutral": 3,
+          "positive": 4
+        },
+        "positive": {
+          "positive": 466,
+          "negative": 2,
+          "neutral": 14,
+          "mixed": 18
+        }
+      }
+    }
+  },
+  "shared_complaints": [
+    {
+      "label": "gameplay.core_loop",
+      "name": "Core loop",
+      "counts": {
+        "2666510": 107,
+        "1473350": 104
+      },
+      "rates": {
+        "2666510": 0.3614864864864865,
+        "1473350": 0.2803234501347709
+      },
+      "shared_score": 0.6012284184453995,
+      "examples": {
+        "2666510": [
+          "Requires too much active maintenance for an idle game.",
+          "Gameplay involves minimal interaction and excessive waiting."
+        ],
+        "1473350": [
+          "Strategic excitement diminished by the end of the game.",
+          "Gameplay itself feels bad for an incremental game."
+        ]
+      }
+    },
+    {
+      "label": "gameplay.progression",
+      "name": "Progression",
+      "counts": {
+        "2666510": 59,
+        "1473350": 116
+      },
+      "rates": {
+        "2666510": 0.19932432432432431,
+        "1473350": 0.31266846361185985
+      },
+      "shared_score": 0.4553207182924164,
+      "examples": {
+        "2666510": [
+          "Lacks scaling depth and incentive to explore all options",
+          "Worlds are completely separated without easy switching or offline progression."
+        ],
+        "1473350": [
+          "Unsuccessful builds waste hours without rewarding talent points.",
+          "Linear shard growth and heavy resource bottlenecks prevent exponential scaling."
+        ]
+      }
+    },
+    {
+      "label": "content.content_amount",
+      "name": "Amount of content",
+      "counts": {
+        "2666510": 74,
+        "1473350": 63
+      },
+      "rates": {
+        "2666510": 0.25,
+        "1473350": 0.16981132075471697
+      },
+      "shared_score": 0.3797169811320754,
+      "examples": {
+        "2666510": [
+          "Finished all game content in only 22 hours.",
+          "Game content is completely finished in about three days."
+        ],
+        "1473350": [
+          "Lacks content for an idle game at this price.",
+          "Lacks substantial content despite long idling times."
+        ]
+      }
+    },
+    {
+      "label": "gameplay.pacing",
+      "name": "Pacing",
+      "counts": {
+        "2666510": 35,
+        "1473350": 65
+      },
+      "rates": {
+        "2666510": 0.11824324324324324,
+        "1473350": 0.1752021563342318
+      },
+      "shared_score": 0.2649659430319808,
+      "examples": {
+        "2666510": [
+          "The start of the game is very slow and aimless.",
+          "Pacing is off; lacks offline progression for long absences."
+        ],
+        "1473350": [
+          "Long waiting periods between meaningful choices.",
+          "Requires excessive idle time early on due to high upgrade costs."
+        ]
+      }
+    },
+    {
+      "label": "gameplay.balance",
+      "name": "Balance",
+      "counts": {
+        "2666510": 23,
+        "1473350": 50
+      },
+      "rates": {
+        "2666510": 0.0777027027027027,
+        "1473350": 0.1347708894878706
+      },
+      "shared_score": 0.18393949879798938,
+      "examples": {
+        "2666510": [
+          "Only one auto-planting NPC exists, capping automation throughput.",
+          "Machine upgrades excessively multiply maintenance costs without matching crop upgrades."
+        ],
+        "1473350": [
+          "Too many upgrade options feature harsh downsides.",
+          "Many upgrades are traps and punish player experimentation."
+        ]
+      }
+    },
+    {
+      "label": "presentation.ui",
+      "name": "Interface",
+      "counts": {
+        "2666510": 41,
+        "1473350": 25
+      },
+      "rates": {
+        "2666510": 0.13851351351351351,
+        "1473350": 0.0673854447439353
+      },
+      "shared_score": 0.1703349238726597,
+      "examples": {
+        "2666510": [
+          "Lacks statistical charts to track efficiency and machine upkeep status.",
+          "Provides little guidance, making mistakes very costly in time."
+        ],
+        "1473350": [
+          "Too many numbers and stats are hidden.",
+          "The game lacks sufficient detail to accurately min-max builds."
+        ]
+      }
+    },
+    {
+      "label": "presentation.ux",
+      "name": "User experience",
+      "counts": {
+        "2666510": 26,
+        "1473350": 26
+      },
+      "rates": {
+        "2666510": 0.08783783783783784,
+        "1473350": 0.07008086253369272
+      },
+      "shared_score": 0.149040212719458,
+      "examples": {
+        "2666510": [
+          "Confusing UI icons and lack of affordability indicators",
+          "Poor UI and lack of explanations make initial gameplay confusing."
+        ],
+        "1473350": [
+          "Key mechanics are not usefully explained.",
+          "Compression events and damage/collection mechanics are confusingly presented."
+        ]
+      }
+    },
+    {
+      "label": "gameplay.grind",
+      "name": "Grind",
+      "counts": {
+        "2666510": 24,
+        "1473350": 21
+      },
+      "rates": {
+        "2666510": 0.08108108108108109,
+        "1473350": 0.05660377358490566
+      },
+      "shared_score": 0.12544620091789904,
+      "examples": {
+        "2666510": [
+          "Winter update added RNG grind for NPC upgrades on cooldowns.",
+          "Obtaining all achievements is an extremely annoying and boring grind."
+        ],
+        "1473350": [
+          "Acquiring prestige points takes far too long.",
+          "The game devolves into a brutal, tedious grind after a few hours."
+        ]
+      }
+    },
+    {
+      "label": "gameplay.meta_progression",
+      "name": "Meta Progression",
+      "counts": {
+        "2666510": 3,
+        "1473350": 52
+      },
+      "rates": {
+        "2666510": 0.010135135135135136,
+        "1473350": 0.14016172506738545
+      },
+      "shared_score": 0.08528356523639544,
+      "examples": {
+        "2666510": [
+          "Leaving game running idle provides no practical benefit for accumulated resources.",
+          "Lacks incremental depth or New Game Plus mechanics."
+        ],
+        "1473350": [
+          "Prestige points are limited and provide dubious upgrade options.",
+          "Resets suffer from severe diminishing returns."
+        ]
+      }
+    },
+    {
+      "label": "gameplay.replayability",
+      "name": "Replayability",
+      "counts": {
+        "2666510": 21,
+        "1473350": 11
+      },
+      "rates": {
+        "2666510": 0.07094594594594594,
+        "1473350": 0.029649595687331536
+      },
+      "shared_score": 0.07994736650397027,
+      "examples": {
+        "2666510": [
+          "No appeal to start new farms since they only add obstacles.",
+          "No incentive to replay or play additional unlocked maps."
+        ],
+        "1473350": [
+          "Replay value is low due to limited choices and speedrun focus.",
+          "Low replay value once the correct upgrade synergy combination is found."
+        ]
+      }
+    },
+    {
+      "label": "content.content_variety",
+      "name": "Content variety",
+      "counts": {
+        "2666510": 15,
+        "1473350": 10
+      },
+      "rates": {
+        "2666510": 0.05067567567567568,
+        "1473350": 0.026954177897574125
+      },
+      "shared_score": 0.06576910468419903,
+      "examples": {
+        "2666510": [
+          "Additional maps only offer different scenery with identical unlock paths.",
+          "Unlocking nearly everything on the first map makes subsequent gameplay repetitive."
+        ],
+        "1473350": [
+          "Little content variety after the initial few hours.",
+          "Lacks variety to differentiate itself among clickers."
+        ]
+      }
+    },
+    {
+      "label": "content.endgame",
+      "name": "Endgame",
+      "counts": {
+        "2666510": 12,
+        "1473350": 11
+      },
+      "rates": {
+        "2666510": 0.04054054054054054,
+        "1473350": 0.029649595687331536
+      },
+      "shared_score": 0.06474466380126757,
+      "examples": {
+        "2666510": [
+          "Almost nothing left to do after completion besides collecting poop.",
+          "Abrupt lack of endgame systems or sinks for surplus resources."
+        ],
+        "1473350": [
+          "Final talent tree is inaccessible outside infinite or speedrun modes.",
+          "Late game fun diminishes due to rigid numerical thresholds."
+        ]
+      }
+    },
+    {
+      "label": "product.value",
+      "name": "Value",
+      "counts": {
+        "2666510": 7,
+        "1473350": 19
+      },
+      "rates": {
+        "2666510": 0.02364864864864865,
+        "1473350": 0.05121293800539083
+      },
+      "shared_score": 0.06107944197566839,
+      "examples": {
+        "2666510": [
+          "Disappointing value even if it were free.",
+          "Other idle games offer better experience for cheaper."
+        ],
+        "1473350": [
+          "Not worth the purchase price.",
+          "Other idle games offer more depth from the same base concept."
+        ]
+      }
+    },
+    {
+      "label": "gameplay.difficulty",
+      "name": "Difficulty",
+      "counts": {
+        "2666510": 4,
+        "1473350": 29
+      },
+      "rates": {
+        "2666510": 0.013513513513513514,
+        "1473350": 0.07816711590296496
+      },
+      "shared_score": 0.05935382822175275,
+      "examples": {
+        "2666510": [
+          "Additional maps add frustrating player penalties without rewarding counters.",
+          "Requires no skill."
+        ],
+        "1473350": [
+          "Irreversible upgrade mistakes cause stressful resets and analysis paralysis.",
+          "Gameplay is overly punishing for non-intuitive builds."
+        ]
+      }
+    },
+    {
+      "label": "product.missing_features",
+      "name": "Missing features",
+      "counts": {
+        "2666510": 13,
+        "1473350": 6
+      },
+      "rates": {
+        "2666510": 0.04391891891891892,
+        "1473350": 0.016172506738544475
+      },
+      "shared_score": 0.046218219567276175,
+      "examples": {
+        "2666510": [
+          "Missing Russian language support despite supporting many other languages.",
+          "No full screen option is available."
+        ],
+        "1473350": [
+          "Does not feature offline progress.",
+          "Lacks offline AFK progression entirely."
+        ]
+      }
+    }
+  ],
+  "trends": {
+    "1473350": [
+      {
+        "year": 2023,
+        "reviews": 1681,
+        "negative": 53,
+        "negative_rate": 0.03152885187388459
+      },
+      {
+        "year": 2024,
+        "reviews": 5315,
+        "negative": 177,
+        "negative_rate": 0.033301975540921916
+      },
+      {
+        "year": 2025,
+        "reviews": 2225,
+        "negative": 178,
+        "negative_rate": 0.08
+      },
+      {
+        "year": 2026,
+        "reviews": 683,
+        "negative": 103,
+        "negative_rate": 0.15080527086383602
+      }
+    ],
+    "2666510": [
+      {
+        "year": 2024,
+        "reviews": 10622,
+        "negative": 301,
+        "negative_rate": 0.028337412916588214
+      },
+      {
+        "year": 2025,
+        "reviews": 3376,
+        "negative": 130,
+        "negative_rate": 0.03850710900473934
+      },
+      {
+        "year": 2026,
+        "reviews": 768,
+        "negative": 54,
+        "negative_rate": 0.0703125
+      }
+    ]
+  }
+}

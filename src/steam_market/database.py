@@ -163,6 +163,8 @@ class Database:
                summary.review_score, summary.review_score_desc, utcnow()])
 
     def upsert_tags(self, appid: int, tags: dict[str, int], source: str = "steamspy") -> None:
+        if not tags:
+            return
         now = utcnow()
         self.con.executemany("""
           INSERT INTO game_tags VALUES(?,?,?,?,?) ON CONFLICT(appid,tag,source) DO UPDATE SET

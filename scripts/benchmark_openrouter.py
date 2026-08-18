@@ -332,7 +332,11 @@ async def run_deepseek(
     return run
 
 
-async def run_gemini_batch(batches: list[list[tuple[str, str, bool | None]]], poll_seconds: float) -> ModelRun:
+async def run_gemini_batch(
+    batches: list[list[tuple[str, str, bool | None]]],
+    poll_seconds: float,
+    parse_feedback: str = "",
+) -> ModelRun:
     run = ModelRun(model=GEMINI_MODEL, mode="OpenRouter asynchronous Batch API", started_at=now())
     started = time.monotonic()
     requests = []
@@ -340,7 +344,7 @@ async def run_gemini_batch(batches: list[list[tuple[str, str, bool | None]]], po
     for index, batch in enumerate(batches):
         custom_id = f"gemini-{index:04d}"
         records[custom_id] = RequestRecord(custom_id=custom_id, review_ids=[row[0] for row in batch])
-        body = request_body(GEMINI_MODEL, batch, "low")
+        body = request_body(GEMINI_MODEL, batch, "low", parse_feedback)
         body.pop("provider", None)  # routing preferences are invalid inside native provider batch items
         requests.append({"custom_id": custom_id, "body": body})
     async with httpx.AsyncClient(timeout=httpx.Timeout(240)) as client:

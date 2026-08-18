@@ -35,6 +35,11 @@ def test_checkpoint_resume(db):
     assert db.get_checkpoint("reviews:10") is None
 
 
+def test_empty_tag_upsert_is_a_noop(db):
+    db.upsert_tags(10, {})
+    assert db.con.execute("SELECT count(*) FROM game_tags").fetchone()[0] == 0
+
+
 def test_enrichment_versioning_and_aspect_explosion(db):
     db.upsert_catalog_game(10, "Game")
     db.upsert_reviews(10, [REVIEW], lambda _: "hash")
