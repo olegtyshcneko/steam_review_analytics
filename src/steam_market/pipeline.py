@@ -99,7 +99,12 @@ class Pipeline:
         self.db.save_classification(appid, result, self.settings.genre_taxonomy_version, self.settings.llm_model)
         return result.primary_genre
 
-    async def ingest_reviews(self, appid: int, on_page: Callable[[int], None] | None = None) -> int:
+    async def ingest_reviews(
+        self,
+        appid: int,
+        on_page: Callable[[int], None] | None = None,
+        max_reviews: int | None = None,
+    ) -> int:
         key = f"reviews:{appid}"
         checkpoint = self.db.get_checkpoint(key) or {}
         cursor = checkpoint.get("cursor", "*")
@@ -132,6 +137,8 @@ class Pipeline:
             cursor = next_cursor
             if on_page:
                 on_page(stored)
+            if max_reviews is not None and stored >= max_reviews:
+                break
         return stored
 
     async def enrich_pending(self, appid: int, run_id: str | None = None) -> tuple[int, int]:

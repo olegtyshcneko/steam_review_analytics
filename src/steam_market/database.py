@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import uuid
 from pathlib import Path
@@ -10,7 +11,7 @@ import duckdb
 from .domain import GameClassification, ReviewEnrichment, ReviewSummary, utcnow
 
 
-SCHEMA_VERSION = "2"
+SCHEMA_VERSION = "3"
 
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS schema_metadata(version VARCHAR PRIMARY KEY, applied_at TIMESTAMP NOT NULL);
@@ -120,6 +121,11 @@ class Database:
 
     def initialize(self) -> None:
         self.con.execute(SCHEMA_SQL)
+        self.con.execute("""
+          UPDATE reviews
+          SET raw_payload=json_merge_patch(raw_payload, '{"author":{"steamid":null}}')
+          WHERE json_extract_string(raw_payload, '$.author.steamid') IS NOT NULL
+        """)
         self.con.execute(
             "INSERT INTO schema_metadata VALUES (?, ?) ON CONFLICT(version) DO NOTHING",
             [SCHEMA_VERSION, utcnow()],
@@ -183,7 +189,8 @@ class Database:
                 review.get("steam_purchase"), review.get("received_for_free"),
                 review.get("written_during_early_access"), review.get("primarily_steam_deck"),
                 author.get("playtime_forever"), author.get("playtime_last_two_weeks"),
-                author.get("playtime_at_review"), _timestamp(author.get("last_played")), _json(review),
+                author.get("playtime_at_review"), _timestamp(author.get("last_played")),
+                _json(_privacy_safe_review(review)),
                 utcnow(), _timestamp(review.get("timestamp_updated")),
             ])
         if not rows:
@@ -299,6 +306,15 @@ def _timestamp(value: Any) -> Any:
     if value in (None, "", 0):
         return None
     return datetime.fromtimestamp(int(value), timezone.utc).replace(tzinfo=None)
+
+
+def _privacy_safe_review(review: dict[str, Any]) -> dict[str, Any]:
+    """Preserve the source payload without retaining the author's Steam ID."""
+    sanitized = copy.deepcopy(review)
+    author = sanitized.get("author")
+    if isinstance(author, dict):
+        author.pop("steamid", None)
+    return sanitized
 
 
 def _float(value: Any) -> float | None:

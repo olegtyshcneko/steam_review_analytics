@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     duckdb_path: Path = Path("data/steam_market.duckdb")
+    analysis_jobs_path: Path = Path("data/analysis_jobs")
     min_reviews: int = Field(50, ge=0)
     steam_language: str = "all"
     steam_reviews_per_page: int = Field(100, ge=1, le=100)
@@ -21,6 +22,7 @@ class Settings(BaseSettings):
     steamspy_catalog_pages: int = Field(1, ge=1, le=100)
     llm_base_url: str = "http://127.0.0.1:8000/v1"
     llm_api_key: str = "local"
+    openrouter_api_key: str = ""
     llm_model: str = "Qwen3.6-35B-A3B"
     llm_temperature: float = Field(0.1, ge=0, le=2)
     llm_reasoning_effort: str = "none"
@@ -54,6 +56,7 @@ class Settings(BaseSettings):
 
     def ensure_directories(self) -> None:
         self.duckdb_path.parent.mkdir(parents=True, exist_ok=True)
+        self.analysis_jobs_path.mkdir(parents=True, exist_ok=True)
 
     @property
     def llm_models_url(self) -> str:

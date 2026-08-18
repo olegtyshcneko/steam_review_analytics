@@ -1,0 +1,30 @@
+{
+  "name": "steam-review-intelligence",
+  "version": "0.1.0",
+  "description": "Analyze Steam reviews with resumable harness or BYOK batch workflows.",
+  "author": {
+    "name": "olegtyshcneko",
+    "url": "https://github.com/olegtyshcneko"
+  },
+  "homepage": "https://github.com/olegtyshcneko/steam_review_analytics",
+  "repository": "https://github.com/olegtyshcneko/steam_review_analytics",
+  "keywords": ["steam", "reviews", "games", "market-research", "analytics"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Steam Review Intelligence",
+    "shortDescription": "Turn Steam reviews into evidence-backed product insights.",
+    "longDescription": "Ingest public Steam reviews, classify them through your current agent or an OpenRouter batch job, compare games, and generate detailed HTML reports.",
+    "developerName": "olegtyshcneko",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/olegtyshcneko/steam_review_analytics",
+    "privacyPolicyURL": "https://github.com/olegtyshcneko/steam_review_analytics/blob/main/PRIVACY.md",
+    "defaultPrompt": [
+      "Analyze what players dislike about this Steam game.",
+      "Compare player complaints across these Steam games.",
+      "Find underserved game ideas from Steam reviews."
+    ],
+    "brandColor": "#DF5B2F"
+  },
+  "mcpServers": "./.mcp.json"
+}

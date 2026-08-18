@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
   "duckdb>=1.4.0",
   "httpx>=0.28.0",
+  "mcp>=2.0.0,<3",
   "pydantic>=2.11.0",
   "pydantic-settings>=2.10.0",
   "pyyaml>=6.0.2",
@@ -16,6 +17,8 @@ dependencies = [
 
 [project.scripts]
 steam-market = "steam_market.cli:app"
+steam-review-mcp = "steam_market.mcp_server:main"
+steam-review-batch-worker = "steam_market.batch_worker:main"
 
 [dependency-groups]
 dev = ["pytest>=8.4.0", "pytest-asyncio>=1.1.0", "respx>=0.22.0"]

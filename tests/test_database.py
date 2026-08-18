@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from steam_market.domain import Aspect, GameClassification, ReviewEnrichment, ReviewSummary, Statement
 from steam_market.pipeline import validate_database
 
@@ -24,6 +26,28 @@ def test_schema_and_idempotent_upserts(db):
     assert db.con.execute("SELECT name FROM games").fetchone()[0] == "Updated"
     assert db.con.execute("SELECT total_reviews FROM game_review_summary").fetchone()[0] == 51
     assert db.con.execute("SELECT count(*),max(review_text) FROM reviews").fetchone() == (1, "updated")
+
+
+def test_raw_payload_does_not_retain_author_steamid(db):
+    db.upsert_catalog_game(10, "Game")
+    db.upsert_reviews(10, [REVIEW], lambda _: "hashed-author")
+    author_hash, raw_payload = db.con.execute(
+        "SELECT author_steamid_hash,raw_payload FROM reviews"
+    ).fetchone()
+    assert author_hash == "hashed-author"
+    assert "steamid" not in json.loads(raw_payload)["author"]
+
+
+def test_initialize_scrubs_legacy_raw_author_steamid(db):
+    db.upsert_catalog_game(10, "Game")
+    db.upsert_reviews(10, [REVIEW], lambda _: "hashed-author")
+    db.con.execute(
+        "UPDATE reviews SET raw_payload=?",
+        [json.dumps({"author": {"steamid": "legacy-secret", "playtime_forever": 10}})],
+    )
+    db.initialize()
+    raw_payload = db.con.execute("SELECT raw_payload FROM reviews").fetchone()[0]
+    assert "steamid" not in json.loads(raw_payload)["author"]
 
 
 def test_checkpoint_resume(db):

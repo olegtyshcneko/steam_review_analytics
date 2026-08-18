@@ -46,6 +46,24 @@ async def test_review_pagination_and_empty_final_page(settings, db):
 
 
 @pytest.mark.asyncio
+async def test_review_ingestion_can_stop_at_resumable_bound(settings, db):
+    pipeline = Pipeline(settings, db)
+    await pipeline.reviews.close()
+    fake = FakeReviews([
+        ReviewPage(summary=ReviewSummary(total_reviews=3), reviews=[review("1"), review("2")], cursor="next"),
+        ReviewPage(summary=ReviewSummary(total_reviews=3), reviews=[review("3")], cursor="last"),
+    ])
+    pipeline.reviews = fake
+    try:
+        db.upsert_catalog_game(10, "Game")
+        assert await pipeline.ingest_reviews(10, max_reviews=2) == 2
+        assert fake.cursors == ["*"]
+        assert db.get_checkpoint("reviews:10")["cursor"] == "next"
+    finally:
+        await pipeline.store.close(); await pipeline.spy.close(); await pipeline.llm.close()
+
+
+@pytest.mark.asyncio
 async def test_cursor_repeat_is_rejected(settings, db):
     pipeline = Pipeline(settings, db)
     await pipeline.reviews.close()

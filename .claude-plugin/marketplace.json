@@ -1,0 +1,15 @@
+{
+  "name": "steam-review-intelligence",
+  "owner": {
+    "name": "olegtyshcneko"
+  },
+  "plugins": [
+    {
+      "name": "steam-review-intelligence",
+      "source": "./plugins/steam-review-intelligence",
+      "description": "Evidence-backed Steam review analysis with harness and BYOK batch modes",
+      "category": "productivity",
+      "tags": ["steam", "reviews", "games", "analytics"]
+    }
+  ]
+}

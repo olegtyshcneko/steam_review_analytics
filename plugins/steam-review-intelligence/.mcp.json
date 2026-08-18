@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "steam-review-intelligence": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/olegtyshcneko/steam_review_analytics.git",
+        "steam-review-mcp",
+        "--transport",
+        "stdio"
+      ]
+    }
+  }
+}
