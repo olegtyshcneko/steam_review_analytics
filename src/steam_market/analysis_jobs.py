@@ -14,6 +14,13 @@ from typing import Any, Literal
 import duckdb
 from pydantic import BaseModel, Field
 
+from .contracts import (
+    compact_field_legend,
+    compact_output_schema,
+    contract_example,
+    normalize_compact_item,
+    review_label_input_schema,
+)
 from .domain import ReviewEnrichmentItem
 from .taxonomy import AspectTaxonomy
 
@@ -76,21 +83,10 @@ def analysis_contract() -> dict[str, Any]:
             "a genuinely new topic and provide one to four lowercase snake_case words in n."
         ),
         "allowed_aspects": {key: sorted(value) for key, value in taxonomy.categories.items()},
-        "compact_item": {
-            "id": "recommendation_id",
-            "s": "positive | mixed | negative | neutral",
-            "i": "recommend | discourage | mixed | informational | bug_report",
-            "q": "confidence from 0 to 1",
-            "pc": "player context strings",
-            "a": [{"c": "category", "s": "topic", "n": None, "p": "sentiment", "q": 0.9}],
-            "co": [{"l": "category.topic", "n": None, "t": "complaint"}],
-            "pr": [{"l": "category.topic", "n": None, "t": "praise"}],
-            "fr": [{"l": "category.topic", "n": None, "t": "feature request"}],
-            "ti": [{"l": "technical.topic", "n": None, "t": "technical issue"}],
-            "mo": [{"l": "product.topic", "n": None, "t": "monetization comment"}],
-            "ac": [{"l": "accessibility.topic", "n": None, "t": "accessibility comment"}],
-            "mu": [{"l": "multiplayer.topic", "n": None, "t": "multiplayer comment"}],
-        },
+        "compact_field_legend": compact_field_legend(),
+        "input_schema": review_label_input_schema(),
+        "output_schema": compact_output_schema(document=True),
+        "example": contract_example(),
         "submission_rule": "Return exactly one item for every supplied ID and no other IDs.",
     }
 
@@ -302,7 +298,7 @@ class AnalysisJobStore:
             raise AnalysisJobError("Submit at least one labeled review")
         manifest = self.manifest(job_id)
         selected = set(manifest["review_ids"])
-        parsed = [ReviewEnrichmentItem.model_validate(item) for item in items]
+        parsed = [ReviewEnrichmentItem.model_validate(normalize_compact_item(item)) for item in items]
         ids = [item.id for item in parsed]
         if len(ids) != len(set(ids)):
             raise AnalysisJobError("A submission cannot contain duplicate review IDs")

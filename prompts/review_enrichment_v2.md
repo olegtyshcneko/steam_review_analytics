@@ -11,7 +11,8 @@ Use the supplied aspect vocabulary as a controlled statistical taxonomy:
 - Never invent a category or put a topic under the wrong category.
 - Use `category.other` only when no existing topic reasonably describes the claim.
 - With `other`, set `novel_topic` to a specific one-to-four-word lowercase
-  snake_case discovery label. Otherwise `novel_topic` must be null or omitted.
+  snake_case discovery label. Otherwise use the empty representation required by
+  the supplied schema: an empty string in compact batches or null in full output.
 - Reuse the same novel topic for the same concept within the batch. Do not create
   synonyms merely to vary wording.
 - Every novel topic used by a statement must also appear in that review's aspect

@@ -38,3 +38,4 @@ packages = ["src/steam_market"]
 [tool.hatch.build.targets.wheel.force-include]
 "prompts" = "steam_market/resources/prompts"
 "taxonomy" = "steam_market/resources/taxonomy"
+"contracts" = "steam_market/resources/contracts"

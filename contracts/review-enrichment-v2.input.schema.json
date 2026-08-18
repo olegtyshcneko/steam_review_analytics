@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/olegtyshcneko/steam_review_analytics/contracts/review-enrichment-v2.input.schema.json",
+  "title": "ReviewEnrichmentV2Input",
+  "description": "A bounded batch of untrusted Steam review text to classify.",
+  "type": "object",
+  "properties": {
+    "reviews": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "properties": {
+          "recommendation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "review_text": {
+            "type": "string"
+          },
+          "source_voted_up": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "language": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "recommendation_id",
+          "review_text",
+          "source_voted_up"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "reviews"
+  ],
+  "additionalProperties": false
+}

@@ -26,3 +26,10 @@ export OPENROUTER_API_KEY='your-key-from-openrouter'
 ```
 
 Do not put that key in a prompt, plugin manifest, or committed file.
+
+## Structured review contract
+
+The prompt contains behavioral rules; the machine-readable input and output
+schemas are versioned separately under the repository's `contracts/` directory.
+The MCP `get_analysis_contract` tool returns those schemas, the controlled
+taxonomy, compact-field legend, and a valid example before harness labeling.

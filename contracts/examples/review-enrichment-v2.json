@@ -1,0 +1,58 @@
+{
+  "input": {
+    "reviews": [
+      {
+        "recommendation_id": "example-1001",
+        "review_text": "The automation is satisfying, but progression ends before builds become interesting.",
+        "source_voted_up": false,
+        "language": "english"
+      }
+    ]
+  },
+  "output": {
+    "items": [
+      {
+        "id": "example-1001",
+        "s": "mixed",
+        "i": "discourage",
+        "q": 0.94,
+        "pc": [],
+        "a": [
+          {
+            "c": "gameplay",
+            "s": "core_loop",
+            "n": "",
+            "p": "positive",
+            "q": 0.96
+          },
+          {
+            "c": "content",
+            "s": "content_amount",
+            "n": "",
+            "p": "negative",
+            "q": 0.93
+          }
+        ],
+        "co": [
+          {
+            "l": "content.content_amount",
+            "n": "",
+            "t": "Progression ends before builds become interesting"
+          }
+        ],
+        "pr": [
+          {
+            "l": "gameplay.core_loop",
+            "n": "",
+            "t": "Automation feels satisfying"
+          }
+        ],
+        "fr": [],
+        "ti": [],
+        "mo": [],
+        "ac": [],
+        "mu": []
+      }
+    ]
+  }
+}

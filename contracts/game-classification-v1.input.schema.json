@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GameClassificationV1Input",
+  "type": "object",
+  "properties": {
+    "game": {
+      "type": "object"
+    },
+    "tags": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer"
+      }
+    },
+    "deterministic_candidates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "canonical_genres": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "game",
+    "tags",
+    "deterministic_candidates",
+    "canonical_genres"
+  ],
+  "additionalProperties": false
+}

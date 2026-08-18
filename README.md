@@ -9,6 +9,11 @@ The complete product contract is in [PRD.md](PRD.md). This repository implements
 the durable dataset, structured review contract, reference analyses, public MCP
 workflow, and installable Codex/Claude plugin package.
 
+The versioned machine-readable [input and output contracts](contracts/) and a
+complete [review-labeling example](contracts/examples/review-enrichment-v2.json)
+are published alongside the behavioral prompts. They are generated from the
+same Python contract used by MCP and provider execution.
+
 ## Agent plugin and MCP
 
 The `steam-review-intelligence` plugin is packaged once with shared skills and

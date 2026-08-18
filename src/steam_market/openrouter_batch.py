@@ -9,6 +9,7 @@ from typing import Any, Awaitable, Callable
 import httpx
 from pydantic import ValidationError
 
+from .contracts import compact_field_legend, compact_output_schema, normalize_compact_item
 from .domain import ReviewEnrichmentItem
 from .config import Settings
 from .llm import _extract_json
@@ -58,69 +59,12 @@ def make_batches(
     return batches
 
 
-def compact_schema() -> dict[str, Any]:
-    taxonomy = AspectTaxonomy()
-    sentiment = {"type": "string", "enum": ["positive", "mixed", "negative", "neutral"]}
-    novel_topic = {
-        "type": "string",
-        "pattern": "^(?:|[a-z][a-z0-9]*(?:_[a-z0-9]+){0,3})$",
-        "maxLength": 64,
-    }
-    statement = {
-        "type": "object",
-        "properties": {
-            "l": {"type": "string", "enum": sorted(taxonomy.labels)},
-            "n": novel_topic,
-            "t": {"type": "string", "maxLength": 240},
-        },
-        "required": ["l", "n", "t"],
-        "additionalProperties": False,
-    }
-    aspect = {
-        "type": "object",
-        "properties": {
-            "c": {"type": "string", "enum": sorted(taxonomy.categories)},
-            "s": {"type": "string", "enum": sorted(set().union(*taxonomy.categories.values()))},
-            "n": novel_topic,
-            "p": sentiment,
-            "q": {"type": "number", "minimum": 0, "maximum": 1},
-        },
-        "required": ["c", "s", "n", "p", "q"],
-        "additionalProperties": False,
-    }
-    properties: dict[str, Any] = {
-        "id": {"type": "string"},
-        "s": sentiment,
-        "i": {
-            "type": "string",
-            "enum": ["recommend", "discourage", "mixed", "informational", "bug_report"],
-        },
-        "q": {"type": "number", "minimum": 0, "maximum": 1},
-        "pc": {"type": "array", "items": {"type": "string", "maxLength": 120}},
-        "a": {"type": "array", "items": aspect},
-    }
-    for key in ("co", "pr", "fr", "ti", "mo", "ac", "mu"):
-        properties[key] = {"type": "array", "items": statement}
-    item = {
-        "type": "object",
-        "properties": properties,
-        "required": list(properties),
-        "additionalProperties": False,
-    }
-    return {
-        "type": "object",
-        "properties": {"items": {"type": "array", "items": item}},
-        "required": ["items"],
-        "additionalProperties": False,
-    }
-
-
 def request_body(
     model: str,
     batch: list[tuple[str, str, bool | None]],
     parse_feedback: str = "",
 ) -> dict[str, Any]:
-    schema = compact_schema()
+    schema = compact_output_schema()
     taxonomy = AspectTaxonomy()
     prompt = {
         "input": {
@@ -130,14 +74,7 @@ def request_body(
             ],
             "allowed_aspects": {key: sorted(value) for key, value in taxonomy.categories.items()},
             "batch_rule": "Return every supplied recommendation_id exactly once and in the same order.",
-            "compact_field_legend": {
-                "id": "recommendation_id", "s": "sentiment", "i": "review_intent", "q": "confidence",
-                "pc": "player_context", "a": "aspects", "co": "complaints", "pr": "praises",
-                "fr": "feature_requests", "ti": "technical_issues", "mo": "monetization_comments",
-                "ac": "accessibility_comments", "mu": "multiplayer_comments",
-                "aspect": {"c": "category", "s": "topic", "n": "novel topic or empty", "p": "sentiment", "q": "confidence"},
-                "statement": {"l": "category.topic", "n": "novel topic or empty", "t": "normalized statement"},
-            },
+            "compact_field_legend": compact_field_legend(),
         },
         "required_json_schema": schema,
         "parse_feedback": parse_feedback,
@@ -191,15 +128,8 @@ def _parse_result(
     outputs: dict[str, dict[str, Any]] = {}
     errors = [f"{value}: missing" for value in expected_ids if value not in actual_ids]
     for raw in raw_items:
-        for aspect in raw.get("a", []):
-            if aspect.get("n") == "":
-                aspect["n"] = None
-        for key in ("co", "pr", "fr", "ti", "mo", "ac", "mu"):
-            for statement in raw.get(key, []):
-                if statement.get("n") == "":
-                    statement["n"] = None
         try:
-            item = ReviewEnrichmentItem.model_validate(raw)
+            item = ReviewEnrichmentItem.model_validate(normalize_compact_item(raw))
             outputs[item.id] = item.model_dump(mode="json")
         except ValidationError as exc:
             errors.append(f"{raw.get('id')}: {str(exc)[:500]}")

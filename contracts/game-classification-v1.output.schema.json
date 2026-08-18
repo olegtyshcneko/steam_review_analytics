@@ -1,0 +1,66 @@
+{
+  "properties": {
+    "primary_genre": {
+      "title": "Primary Genre",
+      "type": "string"
+    },
+    "secondary_genres": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Secondary Genres",
+      "type": "array"
+    },
+    "mechanics": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Mechanics",
+      "type": "array"
+    },
+    "themes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Themes",
+      "type": "array"
+    },
+    "modes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Modes",
+      "type": "array"
+    },
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "reasoning_summary": {
+      "title": "Reasoning Summary",
+      "type": "string"
+    },
+    "proposed_labels": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Labels",
+      "type": "array"
+    }
+  },
+  "required": [
+    "primary_genre",
+    "confidence",
+    "reasoning_summary"
+  ],
+  "title": "GameClassificationV1Output",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
