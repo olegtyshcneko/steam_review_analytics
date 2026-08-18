@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 from typing import TypeVar
 
 import httpx
@@ -9,13 +8,11 @@ from pydantic import BaseModel, ValidationError
 
 from .config import Settings
 from .domain import GameClassification, ReviewEnrichment, ReviewEnrichmentBatch
+from .resources import resource_path
 from .taxonomy import AspectTaxonomy, Taxonomy
 
 
 T = TypeVar("T", bound=BaseModel)
-ROOT = Path(__file__).resolve().parents[2]
-
-
 class LLMUnavailable(RuntimeError):
     pass
 
@@ -75,7 +72,7 @@ class LLMClient:
         raise ValueError(parse_error or "LLM returned invalid structured output")
 
     async def classify_game(self, metadata: dict, tags: dict[str, int], candidates: list[str], taxonomy: Taxonomy) -> GameClassification:
-        system = (ROOT / "prompts" / "game_classification_v1.md").read_text()
+        system = resource_path("prompts", "game_classification_v1.md").read_text()
         result = await self.structured(system, {
             "game": {"name": metadata.get("name"), "description": metadata.get("short_description"),
                      "steam_genres": metadata.get("genres", []), "categories": metadata.get("categories", [])},
@@ -85,7 +82,7 @@ class LLMClient:
         return taxonomy.validate(result)
 
     async def enrich_review(self, text: str, voted_up: bool | None, aspects: AspectTaxonomy) -> ReviewEnrichment:
-        system = (ROOT / "prompts" / "review_enrichment_v2.md").read_text()
+        system = resource_path("prompts", "review_enrichment_v2.md").read_text()
         result = await self.structured(system, {
             "review_text": text, "source_voted_up": voted_up,
             "allowed_aspects": {key: sorted(value) for key, value in aspects.categories.items()},
@@ -98,7 +95,7 @@ class LLMClient:
     async def enrich_reviews(self, reviews: list[tuple[str, str, bool | None]],
                              aspects: AspectTaxonomy) -> dict[str, ReviewEnrichment]:
         """Enrich a bounded batch and reject partial/misidentified responses."""
-        system = (ROOT / "prompts" / "review_enrichment_v2.md").read_text()
+        system = resource_path("prompts", "review_enrichment_v2.md").read_text()
         expected = [item[0] for item in reviews]
         result = await self.structured(system, {
             "reviews": [{"recommendation_id": rec_id, "review_text": text, "source_voted_up": voted_up}

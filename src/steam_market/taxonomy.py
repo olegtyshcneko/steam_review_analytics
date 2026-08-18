@@ -5,17 +5,16 @@ from typing import TYPE_CHECKING
 
 import yaml
 
+from .resources import resource_path
+
 
 if TYPE_CHECKING:
     from .domain import GameClassification
 
 
-ROOT = Path(__file__).resolve().parents[2]
-
-
 class Taxonomy:
     def __init__(self, path: Path | None = None):
-        self.path = path or ROOT / "taxonomy" / "game_genres_v1.yaml"
+        self.path = path or resource_path("taxonomy", "game_genres_v1.yaml")
         self.data = yaml.safe_load(self.path.read_text())
         self.version = str(self.data["version"])
         self.labels = set(self.data["genres"])
@@ -67,7 +66,7 @@ def deterministic_candidates(tags: list[str], genres: list[str], description: st
 
 class AspectTaxonomy:
     def __init__(self, path: Path | None = None):
-        path = path or ROOT / "taxonomy" / "review_aspects_v2.yaml"
+        path = path or resource_path("taxonomy", "review_aspects_v2.yaml")
         self.data = yaml.safe_load(path.read_text())
         self.version = str(self.data["version"])
         self.categories: dict[str, set[str]] = {k: set(v) for k, v in self.data["categories"].items()}

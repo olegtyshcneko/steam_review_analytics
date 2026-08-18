@@ -4,7 +4,6 @@ import asyncio
 import json
 import os
 from collections import Counter
-from pathlib import Path
 from typing import Any, Awaitable, Callable
 
 import httpx
@@ -13,12 +12,12 @@ from pydantic import ValidationError
 from .domain import ReviewEnrichmentItem
 from .config import Settings
 from .llm import _extract_json
+from .resources import resource_path
 from .taxonomy import AspectTaxonomy
 
 
 OPENROUTER_API = "https://openrouter.ai/api"
 TERMINAL_BATCH_STATES = {"completed", "failed", "cancelled", "expired"}
-ROOT = Path(__file__).resolve().parents[2]
 StateCallback = Callable[[dict[str, Any]], Awaitable[None] | None]
 
 
@@ -146,7 +145,7 @@ def request_body(
     return {
         "model": model,
         "messages": [
-            {"role": "system", "content": (ROOT / "prompts" / "review_enrichment_v2.md").read_text()},
+            {"role": "system", "content": resource_path("prompts", "review_enrichment_v2.md").read_text()},
             {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
         ],
         "response_format": {
