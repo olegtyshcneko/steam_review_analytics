@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from mcp import Client
@@ -7,6 +8,7 @@ from mcp import Client
 from steam_market.analysis_jobs import AnalysisJobStore, analysis_contract
 from steam_market.database import Database
 from steam_market.mcp_server import mcp
+from steam_market.openrouter_batch import _parse_result, request_body
 
 
 def review(rec_id: str, text: str, voted_up: bool) -> dict:
@@ -98,3 +100,18 @@ async def test_mcp_exposes_public_workflow_tools():
         result = await client.list_tools()
     names = {tool.name for tool in result.tools}
     assert {"create_analysis", "next_review_batch", "start_provider_batch", "save_analysis_report"} <= names
+    batch_tool = next(tool for tool in result.tools if tool.name == "start_provider_batch")
+    assert "key" not in " ".join(batch_tool.input_schema["properties"]).lower()
+
+
+def test_openrouter_batch_contract_parses_valid_items_without_credentials():
+    item = compact_item("10-n", False)
+    request = request_body("google/gemini-3.7-flash", [("10-n", "A detailed review fixture.", False)])
+    assert "Authorization" not in json.dumps(request)
+    outputs, usage, errors = _parse_result({
+        "choices": [{"message": {"content": json.dumps({"items": [item]})}}],
+        "usage": {"prompt_tokens": 100, "completion_tokens": 20, "cost": 0.001},
+    }, ["10-n"])
+    assert errors == []
+    assert outputs["10-n"]["co"][0]["l"] == "content.content_amount"
+    assert usage == {"prompt_tokens": 100, "completion_tokens": 20, "cost_usd": 0.001}
