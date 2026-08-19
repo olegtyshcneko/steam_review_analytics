@@ -6,9 +6,9 @@ import httpx
 import pytest
 import respx
 
-from steam_market.domain import GameClassification
-from steam_market.llm import LLMClient
-from steam_market.taxonomy import AspectTaxonomy
+from games_analytics.domain import GameClassification
+from games_analytics.llm import LLMClient
+from games_analytics.taxonomy import AspectTaxonomy
 
 
 @pytest.mark.asyncio

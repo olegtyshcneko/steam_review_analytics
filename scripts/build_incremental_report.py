@@ -10,7 +10,7 @@ from typing import Any
 
 import duckdb
 
-from steam_market.config import Settings
+from games_analytics.config import Settings
 
 
 APPIDS = (2666510, 1473350)

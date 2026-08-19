@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "games-analytics": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/olegtyshcneko/games_analytics.git",
+        "games-analytics-mcp",
+        "--transport",
+        "stdio"
+      ]
+    }
+  }
+}

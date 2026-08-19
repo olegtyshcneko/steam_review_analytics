@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from steam_market.config import Settings
-from steam_market.database import Database
+from games_analytics.config import Settings
+from games_analytics.database import Database
 
 
 @pytest.fixture

@@ -50,9 +50,9 @@ def review_label_input_schema() -> dict[str, Any]:
     }
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://github.com/olegtyshcneko/steam_review_analytics/contracts/review-enrichment-v2.input.schema.json",
+        "$id": "https://github.com/olegtyshcneko/games_analytics/contracts/review-enrichment-v2.input.schema.json",
         "title": "ReviewEnrichmentV2Input",
-        "description": "A bounded batch of untrusted Steam review text to classify.",
+        "description": "A bounded batch of untrusted game review text to classify.",
         "type": "object",
         "properties": {
             "reviews": {"type": "array", "minItems": 1, "maxItems": 100, "items": review},
@@ -123,7 +123,7 @@ def compact_output_schema(*, document: bool = False) -> dict[str, Any]:
     if document:
         schema = {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": "https://github.com/olegtyshcneko/steam_review_analytics/contracts/review-enrichment-v2.output.schema.json",
+            "$id": "https://github.com/olegtyshcneko/games_analytics/contracts/review-enrichment-v2.output.schema.json",
             "title": "ReviewEnrichmentV2Output",
             "description": "Strict compact labels for a complete review batch.",
             **schema,

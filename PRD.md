@@ -1,5 +1,10 @@
 # Product Requirements Document (PRD)
-# Steam Review Market Dataset Builder
+# Steam Module PRD (Foundational Specification)
+
+This document is the original Steam-specific product specification. The current
+project is Games Analytics; cross-platform architecture and mobile collection
+boundaries are documented in [README.md](README.md) and
+[docs/PLATFORMS.md](docs/PLATFORMS.md).
 
 **Version:** 1.0  
 **Status:** Implementation-ready  

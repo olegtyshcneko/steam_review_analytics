@@ -8,7 +8,7 @@ from scripts.benchmark_openrouter import (
     parse_response_partial,
     stable_sample,
 )
-from steam_market.config import Settings
+from games_analytics.config import Settings
 
 
 def test_stable_sample_is_reproducible_and_seeded():

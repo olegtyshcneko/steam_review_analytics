@@ -109,7 +109,7 @@ async def run_worker(
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run one Steam Review Intelligence provider batch job")
+    parser = argparse.ArgumentParser(description="Run one Games Analytics provider batch job")
     parser.add_argument("--job-id", required=True)
     parser.add_argument("--jobs-path", type=Path, required=True)
     parser.add_argument("--database-path", type=Path, required=True)

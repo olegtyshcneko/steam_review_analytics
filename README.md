@@ -1,110 +1,136 @@
-# Steam Review Analytics
+# Games Analytics
 
-A local-first Python CLI and MCP server that downloads public Steam reviews,
-extracts controlled structured feedback, compares player needs across games, and
-generates JSON plus self-contained HTML reports. Analysis can run through the
-connected agent harness or through a user-funded OpenRouter batch job.
+A local-first Python CLI, MCP server, and agent plugin for mining and analyzing
+public game reviews across:
 
-The complete product contract is in [PRD.md](PRD.md). This repository implements
-the durable dataset, structured review contract, reference analyses, public MCP
-workflow, and installable Codex/Claude plugin package.
+- Steam
+- Google Play
+- Apple App Store
 
-The versioned machine-readable [input and output contracts](contracts/) and a
-complete [review-labeling example](contracts/examples/review-enrichment-v2.json)
-are published alongside the behavioral prompts. They are generated from the
-same Python contract used by MCP and provider execution.
+The pipeline prioritizes negative reviews to reveal unmet needs, uses positive
+reviews as design constraints, labels feedback with a controlled structured
+contract, compares games, and renders JSON plus self-contained HTML reports.
+Labeling can run through the connected agent harness or a user-funded OpenRouter
+batch job.
+
+## Architecture
+
+Store-specific behavior is isolated under `src/games_analytics/platforms/`:
+
+- `steam.py` — Steam Store reviews, metadata, and SteamSpy catalog data
+- `google_play.py` — public Google Play storefront metadata and review transport
+- `app_store.py` — Apple lookup metadata and public storefront review feeds
+- `base.py` — shared rate limiting, retries, and verified HTTP transport
+
+All platforms feed normalized DuckDB tables and the `cross_platform_reviews`
+view. The same [versioned input/output contracts](contracts/) are used by MCP,
+agent harnesses, and OpenRouter provider batches.
+
+The former `steam_market` Python namespace and `steam-market` commands remain as
+deprecated compatibility aliases for existing users. New integrations should
+use `games_analytics` and the `games-analytics*` commands.
+
+## Quick start
+
+```bash
+uv sync
+cp .env.example .env
+uv run games-analytics init
+```
+
+Mine a bounded mobile corpus without API credentials:
+
+```bash
+uv run games-analytics mine-store \
+  --platform google-play \
+  --product-id com.pabloleban.IdleSlayer \
+  --country us --language en --max-reviews 500
+
+uv run games-analytics mine-store \
+  --platform app-store \
+  --product-id 1526599527 \
+  --country us --max-reviews 500
+```
+
+Steam ingestion remains available:
+
+```bash
+uv run games-analytics ingest --appid 413150
+```
+
+See the complete [CLI and local-model guide](docs/CLI.md) for Steam discovery,
+mobile mining, DuckDB queries, exports, and optional local-model enrichment.
+Store-specific access modes and limits are documented in
+[platform collection notes](docs/PLATFORMS.md).
 
 ## Agent plugin and MCP
 
-The `steam-review-intelligence` plugin is packaged once with shared skills and
-separate Codex and Claude manifests. Grok Build can consume the Claude package.
-
-The workflow is resumable:
-
-1. Ingest one or more Steam app IDs into local DuckDB.
-2. Create a negative-first analysis corpus with a deterministic positive sample.
-3. Label reviews through the current agent or an OpenRouter native batch job.
-4. Aggregate stable categories and constrained discovered topics.
-5. Have the agent synthesize detailed findings and render an HTML report.
+The `games-analytics` plugin supports Codex, Claude Code, and Grok Build. Its MCP
+offers separate ingestion tools for Steam and mobile storefronts, then a shared
+resumable labeling and report workflow.
 
 ### Codex
 
 ```bash
-codex plugin marketplace add olegtyshcneko/steam_review_analytics
+codex plugin marketplace add olegtyshcneko/games_analytics
 ```
 
-Then install **Steam Review Intelligence** from that marketplace in the Codex
-plugin directory. The repository marketplace is `.agents/plugins/marketplace.json`.
+Install **Games Analytics** from the added marketplace.
 
 ### Claude Code
 
 ```bash
-claude plugin marketplace add olegtyshcneko/steam_review_analytics
-claude plugin install steam-review-intelligence@steam-review-intelligence
+claude plugin marketplace add olegtyshcneko/games_analytics
+claude plugin install games-analytics@games-analytics
 ```
 
-Grok Build can add the same repository and load its Claude Code marketplace and
-plugin metadata.
-
-### Run the MCP directly
+### Run MCP directly
 
 ```bash
-uv sync
-uv run steam-review-mcp --transport stdio
+uv run games-analytics-mcp --transport stdio
 ```
 
-For local HTTP development:
+For local HTTP development only:
 
 ```bash
-uv run steam-review-mcp --transport streamable-http --host 127.0.0.1 --port 8000
+uv run games-analytics-mcp --transport streamable-http --host 127.0.0.1 --port 8000
 ```
 
-The HTTP transport is not configured as a public hosted service. Do not expose it
-to the internet before adding OAuth, authorization, quotas, and deployment origin
-controls.
+Do not expose the HTTP transport publicly before adding authentication,
+authorization, quotas, and deployment-origin controls.
 
-### Execution modes
+## Collection boundaries
 
-- **Harness mode:** the connected Codex, Claude, or Grok agent requests bounded
-  review batches and checkpoints strict v2 labels after each batch.
-- **Provider batch mode:** a detached local worker reads `OPENROUTER_API_KEY` from
-  its environment and submits the corpus through OpenRouter's batch API. The key
-  is never accepted as an MCP tool argument.
+The official Google Play Developer and App Store Connect review APIs require
+developer authentication and are intended for apps you control. Competitor
+research therefore uses public storefront transports. Those public surfaces are
+best-effort and can change without notice; collectors use bounded rates, retries,
+and fixture tests, but live smoke tests remain important.
 
-Configure provider batch mode only in a local environment file or shell:
+Google Play collection supports continuation-token pagination. Apple public
+feeds expose at most ten 50-review pages per country storefront, so a storefront
+normally yields no more than roughly 500 currently visible reviews. Country and
+language are explicit because mobile review visibility varies by storefront.
 
-```bash
-export OPENROUTER_API_KEY='your-key-from-openrouter'
-```
+Reviewer names and profile images are not retained for mobile reviews. Steam IDs
+are hashed and removed from stored raw payloads. See [PRIVACY.md](PRIVACY.md) and
+[SECURITY.md](SECURITY.md).
 
-See [PRIVACY.md](PRIVACY.md) and [SECURITY.md](SECURITY.md) before distributing or
-deploying the server.
+## Execution modes
 
-## CLI and local-model pipeline
-
-The standalone `steam-market` CLI is an advanced workflow separate from the MCP
-plugin. It covers broad catalog discovery, direct DuckDB inspection, exports,
-and optional classification/enrichment through an OpenAI-compatible local
-server. Local-model support applies to this CLI pipeline, not to the MCP
-provider-batch mode.
-
-See the complete [CLI and local-model guide](docs/CLI.md) for installation,
-configuration, commands, local Qwen setup, analytical queries, backups, and
-troubleshooting.
+- **Harness:** the connected Codex, Claude, or Grok agent labels bounded review
+  batches and checkpoints strict v2 output after every batch.
+- **Provider batch:** a detached worker reads `OPENROUTER_API_KEY` from its local
+  environment. The key is never accepted as an MCP argument.
 
 ## Tests
-
-Normal tests use fixtures and mocked HTTP/LLM behavior; they need neither Steam nor
-a running model.
 
 ```bash
 uv run pytest
 ```
 
-## Provider benchmarks
+Fixture tests require no storefront access or model. Live mobile smoke tests are
+performed separately because public storefront responses can drift.
 
-The reproducible OpenRouter review-enrichment harness is
-`scripts/benchmark_openrouter.py`. Raw samples and responses stay under ignored
-`data/`; aggregate benchmark reports are committed under `benchmarks/`.
-
-Current result: [Gemini 3.7 Flash Batch vs DeepSeek V4 Flash](benchmarks/2026-08-14-openrouter-review-enrichment.md).
+Existing example reports remain under [reports/](reports/), and provider model
+benchmarks remain under [benchmarks/](benchmarks/).

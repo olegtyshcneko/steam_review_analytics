@@ -1,0 +1,13 @@
+{
+  "name": "games-analytics",
+  "version": "0.2.0",
+  "description": "Analyze Steam, Google Play, and App Store reviews with resumable harness or BYOK batch workflows.",
+  "author": {
+    "name": "olegtyshcneko",
+    "url": "https://github.com/olegtyshcneko"
+  },
+  "homepage": "https://github.com/olegtyshcneko/games_analytics",
+  "repository": "https://github.com/olegtyshcneko/games_analytics",
+  "keywords": ["steam", "google-play", "app-store", "reviews", "games", "analytics"],
+  "mcpServers": "./.mcp.json"
+}

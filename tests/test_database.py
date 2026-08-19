@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import json
 
-from steam_market.domain import Aspect, GameClassification, ReviewEnrichment, ReviewSummary, Statement
-from steam_market.pipeline import validate_database
+from games_analytics.domain import (
+    Aspect, GameClassification, ReviewEnrichment, ReviewSummary, Statement, StoreProduct, StoreReview,
+)
+from games_analytics.pipeline import validate_database
 
 
 REVIEW = {
@@ -98,3 +100,17 @@ def test_run_tracking(db):
     run_id = db.start_run("test", {"seed": 42})
     db.finish_run(run_id, "completed", {"games_considered": 2, "games_qualified": 1, "reviews_ingested": 3})
     assert db.con.execute("SELECT status,games_considered,reviews_ingested FROM ingestion_runs").fetchone() == ("completed", 2, 3)
+
+
+def test_store_reviews_are_idempotent_and_visible_in_cross_platform_view(db):
+    product = StoreProduct(platform="google_play", product_id="com.example.game", name="Fixture Game")
+    review = StoreReview(review_id="mobile-1", text="Great loop but frequent crashes.", rating=2)
+    key = db.upsert_store_product(product)
+    db.upsert_store_reviews(key, [review])
+    db.upsert_store_reviews(key, [review.model_copy(update={"text": "Updated review text."})])
+    assert db.con.execute("SELECT count(*),max(review_text) FROM store_reviews").fetchone() == (
+        1, "Updated review text.",
+    )
+    assert db.con.execute(
+        "SELECT platform,product_key,source_voted_up FROM cross_platform_reviews"
+    ).fetchone() == ("google_play", "google_play:com.example.game", False)

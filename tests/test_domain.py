@@ -3,9 +3,9 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from steam_market.domain import Aspect, GameClassification, ReviewEnrichmentItem, Statement, enrichment_eligibility, review_band
-from steam_market.taxonomy import AspectTaxonomy, Taxonomy, deterministic_candidates
-from steam_market.config import Settings
+from games_analytics.domain import Aspect, GameClassification, ReviewEnrichmentItem, Statement, enrichment_eligibility, review_band
+from games_analytics.taxonomy import AspectTaxonomy, Taxonomy, deterministic_candidates
+from games_analytics.config import Settings
 
 
 @pytest.mark.parametrize(("count", "expected"), [

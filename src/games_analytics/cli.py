@@ -19,12 +19,14 @@ from .config import Settings
 from .database import Database
 from .domain import GameClassification
 from .llm import LLMClient, LLMUnavailable
+from .platforms.app_store import AppStoreSource
+from .platforms.google_play import GooglePlaySource
 from .pipeline import Pipeline, validate_database
-from .sources import SteamReviewSource
+from .platforms.steam import SteamReviewSource
 from .taxonomy import AspectTaxonomy, Taxonomy, deterministic_candidates
 
 
-app = typer.Typer(no_args_is_help=True, help="Build a local Steam review market dataset.")
+app = typer.Typer(no_args_is_help=True, help="Build and analyze cross-platform game review datasets.")
 console = Console()
 
 
@@ -148,6 +150,67 @@ def ingest(appid: Annotated[int, typer.Option("--appid")]) -> None:
     name, count = _run(work())
     db.close()
     console.print(f"\nIngested {count:,} review rows for {name}")
+
+
+@app.command("mine-store")
+def mine_store(
+    platform: Annotated[str, typer.Option("--platform", help="google-play or app-store")],
+    product_id: Annotated[str, typer.Option("--product-id", help="Android package name or Apple numeric app ID")],
+    country: Annotated[str, typer.Option("--country", help="Two-letter storefront code")] = "us",
+    language: Annotated[str, typer.Option("--language", help="Google Play locale language")] = "en",
+    max_reviews: Annotated[int, typer.Option("--max-reviews", min=1, max=100_000)] = 500,
+) -> None:
+    """Mine public Google Play or Apple App Store reviews without API credentials."""
+    settings, db = _open()
+    canonical = platform.strip().lower().replace("_", "-")
+    if canonical not in {"google-play", "app-store"}:
+        db.close()
+        raise typer.BadParameter("--platform must be google-play or app-store")
+
+    async def work() -> tuple[str, str, int]:
+        source = (
+            GooglePlaySource(settings.store_requests_per_second, settings.http_max_retries)
+            if canonical == "google-play"
+            else AppStoreSource(settings.store_requests_per_second, settings.http_max_retries)
+        )
+        try:
+            if canonical == "google-play":
+                product = await source.get_product(product_id, language, country)
+            else:
+                product = await source.get_product(product_id, country)
+            product_key = db.upsert_store_product(product)
+            stored = 0
+            cursor: str | None = None
+            while stored < max_reviews:
+                remaining = max_reviews - stored
+                if canonical == "google-play":
+                    page = await source.get_reviews(
+                        product_id,
+                        language=language,
+                        country=country,
+                        count=min(500, remaining),
+                        cursor=cursor,
+                    )
+                else:
+                    page_number = int(cursor or "1")
+                    page = await source.get_reviews(product_id, country=country, page=page_number)
+                if not page.reviews:
+                    break
+                selected = page.reviews[:remaining]
+                stored += db.upsert_store_reviews(product_key, selected)
+                console.print(f"Processed {stored:,} {canonical} reviews", end="\r")
+                if not page.next_cursor or page.next_cursor == cursor:
+                    break
+                cursor = page.next_cursor
+            return product.name, product_key, stored
+        finally:
+            await source.close()
+
+    try:
+        name, product_key, count = _run(work())
+    finally:
+        db.close()
+    console.print(f"\nMined {count:,} reviews for {name} ({product_key})")
 
 
 @app.command("classify-games")
@@ -308,7 +371,7 @@ def export_parquet(directory: Path = Path("data/export")) -> None:
     """Export major analytical tables as Parquet."""
     _, db = _open()
     directory.mkdir(parents=True, exist_ok=True)
-    for table in ("games", "reviews", "review_aspects"):
+    for table in ("games", "reviews", "store_products", "store_reviews", "review_aspects"):
         target = (directory / f"{table}.parquet").resolve()
         db.con.execute(f"COPY {table} TO ? (FORMAT PARQUET)", [str(target)])
         console.print(target)

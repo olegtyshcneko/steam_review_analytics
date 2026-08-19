@@ -1,14 +1,14 @@
 {
   "name": "personal",
   "interface": {
-    "displayName": "Steam Review Intelligence"
+    "displayName": "Games Analytics"
   },
   "plugins": [
     {
-      "name": "steam-review-intelligence",
+      "name": "games-analytics",
       "source": {
         "source": "local",
-        "path": "./plugins/steam-review-intelligence"
+        "path": "./plugins/games-analytics"
       },
       "policy": {
         "installation": "AVAILABLE",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/olegtyshcneko/steam_review_analytics/contracts/review-enrichment-v2.output.schema.json",
+  "$id": "https://github.com/olegtyshcneko/games_analytics/contracts/review-enrichment-v2.output.schema.json",
   "title": "ReviewEnrichmentV2Output",
   "description": "Strict compact labels for a complete review batch.",
   "type": "object",

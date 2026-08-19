@@ -1,15 +1,16 @@
 # Privacy
 
-Steam Review Analytics is currently a local-first tool and does not operate a
+Games Analytics is currently a local-first tool and does not operate a
 hosted service. Its default MCP plugin stores its database and analysis jobs on
 the user's machine.
 
 ## Data processed
 
-The application downloads public Steam game metadata and public review content.
-It retains review text and review metadata needed for aggregate analysis. Steam
-author IDs are hashed before storage and are removed from the retained source
-payload. Generated public reports contain aggregate statistics and short,
+The application downloads public Steam, Google Play, and Apple App Store game
+metadata and review content. It retains review text and metadata needed for
+aggregate analysis. Steam author IDs are hashed before storage and removed from
+the retained source payload. Mobile reviewer names and profile images are not
+retained. Generated public reports contain aggregate statistics and short,
 model-normalized evidence rather than author identities or complete raw reviews.
 
 ## Model processing

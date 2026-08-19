@@ -35,8 +35,8 @@ def headers() -> dict[str, str]:
     return {
         "Authorization": f"Bearer {api_key()}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://github.com/olegtyshcneko/steam_review_analytics",
-        "X-OpenRouter-Title": "Steam Review Intelligence",
+        "HTTP-Referer": "https://github.com/olegtyshcneko/games_analytics",
+        "X-OpenRouter-Title": "Games Analytics",
     }
 
 

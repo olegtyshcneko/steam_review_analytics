@@ -1,15 +1,15 @@
 {
-  "name": "steam-review-intelligence",
+  "name": "games-analytics",
   "owner": {
     "name": "olegtyshcneko"
   },
   "plugins": [
     {
-      "name": "steam-review-intelligence",
-      "source": "./plugins/steam-review-intelligence",
-      "description": "Evidence-backed Steam review analysis with harness and BYOK batch modes",
+      "name": "games-analytics",
+      "source": "./plugins/games-analytics",
+      "description": "Evidence-backed cross-platform game review analysis with harness and BYOK batch modes",
       "category": "productivity",
-      "tags": ["steam", "reviews", "games", "analytics"]
+      "tags": ["steam", "google-play", "app-store", "reviews", "games", "analytics"]
     }
   ]
 }

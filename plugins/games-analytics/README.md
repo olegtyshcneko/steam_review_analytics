@@ -1,7 +1,7 @@
-# Steam Review Intelligence plugin
+# Games Analytics plugin
 
-This plugin connects Codex, Claude Code, or Grok Build to the local-first Steam
-Review Intelligence MCP server. It supports two execution modes:
+This plugin connects Codex, Claude Code, or Grok Build to the local-first Games
+Analytics MCP server for Steam, Google Play, and Apple App Store reviews.
 
 - **Harness:** the connected agent labels bounded, checkpointed review batches.
 - **Provider batch:** a background worker uses `OPENROUTER_API_KEY` from the local
@@ -17,7 +17,7 @@ manifest. Grok Build can load the Claude Code package directly.
 
 The bundled MCP configuration launches the server with `uvx` from the public Git
 repository. Install `uv`, then add this repository as a marketplace in the target
-agent and install `steam-review-intelligence`.
+agent and install `games-analytics`.
 
 For provider batch mode, set the key in the environment that launches the agent:
 

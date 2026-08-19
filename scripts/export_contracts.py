@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from steam_market.contracts import compact_output_schema, contract_example, review_label_input_schema
-from steam_market.domain import GameClassification
+from games_analytics.contracts import compact_output_schema, contract_example, review_label_input_schema
+from games_analytics.domain import GameClassification
 
 
 ROOT = Path(__file__).resolve().parents[1]

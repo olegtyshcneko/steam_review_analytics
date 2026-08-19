@@ -3,15 +3,15 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from steam_market.analysis_jobs import analysis_contract
-from steam_market.contracts import (
+from games_analytics.analysis_jobs import analysis_contract
+from games_analytics.contracts import (
     compact_output_schema,
     contract_example,
     normalize_compact_item,
     review_label_input_schema,
 )
-from steam_market.domain import ReviewEnrichmentBatch
-from steam_market.openrouter_batch import request_body
+from games_analytics.domain import ReviewEnrichmentBatch
+from games_analytics.openrouter_batch import request_body
 
 from scripts.export_contracts import documents
 

@@ -1,0 +1,30 @@
+{
+  "name": "games-analytics",
+  "version": "0.2.0",
+  "description": "Analyze Steam, Google Play, and App Store reviews with resumable harness or BYOK batch workflows.",
+  "author": {
+    "name": "olegtyshcneko",
+    "url": "https://github.com/olegtyshcneko"
+  },
+  "homepage": "https://github.com/olegtyshcneko/games_analytics",
+  "repository": "https://github.com/olegtyshcneko/games_analytics",
+  "keywords": ["steam", "google-play", "app-store", "reviews", "games", "analytics"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Games Analytics",
+    "shortDescription": "Turn cross-platform game reviews into product insights.",
+    "longDescription": "Mine public Steam, Google Play, and App Store reviews, classify them through your current agent or an OpenRouter batch job, compare games, and generate detailed HTML reports.",
+    "developerName": "olegtyshcneko",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/olegtyshcneko/games_analytics",
+    "privacyPolicyURL": "https://github.com/olegtyshcneko/games_analytics/blob/main/PRIVACY.md",
+    "defaultPrompt": [
+      "Analyze what players dislike about this game.",
+      "Compare complaints across Steam and mobile games.",
+      "Find underserved game ideas from public reviews."
+    ],
+    "brandColor": "#DF5B2F"
+  },
+  "mcpServers": "./.mcp.json"
+}

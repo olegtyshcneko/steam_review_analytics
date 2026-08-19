@@ -8,10 +8,10 @@ from typing import Any, Iterable
 
 import duckdb
 
-from .domain import GameClassification, ReviewEnrichment, ReviewSummary, utcnow
+from .domain import GameClassification, ReviewEnrichment, ReviewSummary, StoreProduct, StoreReview, utcnow
 
 
-SCHEMA_VERSION = "3"
+SCHEMA_VERSION = "4"
 
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS schema_metadata(version VARCHAR PRIMARY KEY, applied_at TIMESTAMP NOT NULL);
@@ -45,6 +45,19 @@ CREATE TABLE IF NOT EXISTS reviews(
  playtime_forever_minutes BIGINT, playtime_last_two_weeks_minutes BIGINT,
  playtime_at_review_minutes BIGINT, last_played TIMESTAMP, raw_payload JSON,
  ingested_at TIMESTAMP NOT NULL, source_updated_at TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS store_products(
+ product_key VARCHAR PRIMARY KEY, platform VARCHAR NOT NULL, store_product_id VARCHAR NOT NULL,
+ name VARCHAR NOT NULL, developer VARCHAR, description VARCHAR, store_url VARCHAR,
+ source_metadata JSON, first_seen_at TIMESTAMP NOT NULL, last_refreshed_at TIMESTAMP NOT NULL,
+ UNIQUE(platform, store_product_id)
+);
+CREATE TABLE IF NOT EXISTS store_reviews(
+ review_key VARCHAR PRIMARY KEY, product_key VARCHAR NOT NULL, platform_review_id VARCHAR NOT NULL,
+ review_text VARCHAR NOT NULL, rating INTEGER NOT NULL, source_voted_up BOOLEAN, language VARCHAR,
+ title VARCHAR, timestamp_created TIMESTAMP, timestamp_updated TIMESTAMP, app_version VARCHAR,
+ votes_up BIGINT, developer_response VARCHAR, raw_payload JSON, ingested_at TIMESTAMP NOT NULL,
+ source_updated_at TIMESTAMP, UNIQUE(product_key, platform_review_id)
 );
 CREATE TABLE IF NOT EXISTS review_enrichment(
  recommendation_id VARCHAR NOT NULL, enrichment_version VARCHAR NOT NULL, sentiment VARCHAR,
@@ -103,6 +116,17 @@ CREATE OR REPLACE VIEW review_analysis AS
  FROM reviews r JOIN games g USING(appid)
  LEFT JOIN latest_review_enrichment e USING(recommendation_id)
  LEFT JOIN latest_game_classification c USING(appid);
+CREATE OR REPLACE VIEW cross_platform_reviews AS
+ SELECT 'steam' platform, 'steam:' || cast(appid AS VARCHAR) product_key,
+        'steam:' || recommendation_id review_key, recommendation_id platform_review_id,
+        review_text, voted_up source_voted_up, NULL::INTEGER rating, language,
+        timestamp_created, timestamp_updated, votes_up, raw_payload
+ FROM reviews
+ UNION ALL
+ SELECT p.platform, r.product_key, r.review_key, r.platform_review_id,
+        r.review_text, r.source_voted_up, r.rating, r.language,
+        r.timestamp_created, r.timestamp_updated, r.votes_up, r.raw_payload
+ FROM store_reviews r JOIN store_products p USING(product_key);
 """
 
 
@@ -209,6 +233,41 @@ class Database:
         """, rows)
         return len(rows)
 
+    def upsert_store_product(self, product: StoreProduct) -> str:
+        now = utcnow()
+        self.con.execute("""
+          INSERT INTO store_products VALUES(?,?,?,?,?,?,?,?,?,?)
+          ON CONFLICT(product_key) DO UPDATE SET name=excluded.name,developer=excluded.developer,
+          description=excluded.description,store_url=excluded.store_url,
+          source_metadata=excluded.source_metadata,last_refreshed_at=excluded.last_refreshed_at
+        """, [product.product_key, product.platform, product.product_id, product.name,
+              product.developer, product.description, product.url, _json(product.metadata), now, now])
+        return product.product_key
+
+    def upsert_store_reviews(self, product_key: str, reviews: Iterable[StoreReview]) -> int:
+        rows = []
+        for review in reviews:
+            review_key = f"{product_key}:{review.review_id}"
+            source_voted_up = True if review.rating >= 4 else False if review.rating <= 2 else None
+            rows.append([
+                review_key, product_key, review.review_id, review.text, review.rating, source_voted_up,
+                review.language, review.title, review.created_at, review.updated_at, review.app_version,
+                review.votes_up, review.developer_response, _json(review.raw_payload), utcnow(),
+                review.updated_at,
+            ])
+        if not rows:
+            return 0
+        self.con.executemany("""
+          INSERT INTO store_reviews VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+          ON CONFLICT(review_key) DO UPDATE SET review_text=excluded.review_text,
+          rating=excluded.rating,source_voted_up=excluded.source_voted_up,
+          language=excluded.language,title=excluded.title,timestamp_updated=excluded.timestamp_updated,
+          app_version=excluded.app_version,votes_up=excluded.votes_up,
+          developer_response=excluded.developer_response,raw_payload=excluded.raw_payload,
+          ingested_at=excluded.ingested_at,source_updated_at=excluded.source_updated_at
+        """, rows)
+        return len(rows)
+
     def checkpoint(self, job_key: str, job_type: str, appid: int | None, value: dict) -> None:
         self.con.execute("""INSERT INTO ingestion_checkpoints VALUES(?,?,?,?,?)
           ON CONFLICT(job_key) DO UPDATE SET checkpoint=excluded.checkpoint,updated_at=excluded.updated_at
@@ -296,6 +355,7 @@ class Database:
 
     def table_counts(self) -> dict[str, int]:
         tables = ["games", "game_review_summary", "game_tags", "game_genre_classification", "reviews",
+                  "store_products", "store_reviews",
                   "review_enrichment", "review_aspects", "review_discovered_topics", "ingestion_runs",
                   "ingestion_checkpoints", "source_errors"]
         return {table: self.con.execute(f"SELECT count(*) FROM {table}").fetchone()[0] for table in tables}

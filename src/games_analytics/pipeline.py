@@ -15,7 +15,7 @@ from .config import Settings
 from .database import Database
 from .domain import enrichment_eligibility
 from .llm import LLMClient
-from .sources import SteamReviewSource, SteamSpySource, SteamStoreSource
+from .platforms.steam import SteamReviewSource, SteamSpySource, SteamStoreSource
 from .taxonomy import AspectTaxonomy, Taxonomy, deterministic_candidates
 
 
@@ -365,6 +365,8 @@ def validate_database(db: Database, taxonomy: Taxonomy | None = None, aspects: A
     checks = {
         "duplicate_games": "SELECT count(*)-count(DISTINCT appid) FROM games",
         "duplicate_reviews": "SELECT count(*)-count(DISTINCT recommendation_id) FROM reviews",
+        "duplicate_store_reviews": "SELECT count(*)-count(DISTINCT review_key) FROM store_reviews",
+        "orphan_store_reviews": "SELECT count(*) FROM store_reviews r ANTI JOIN store_products p USING(product_key)",
         "orphan_enrichment": "SELECT count(*) FROM review_enrichment e ANTI JOIN reviews r USING(recommendation_id)",
         "orphan_aspects": "SELECT count(*) FROM review_aspects a ANTI JOIN reviews r USING(recommendation_id)",
         "orphan_discovered_topics": "SELECT count(*) FROM review_discovered_topics d ANTI JOIN reviews r USING(recommendation_id)",
@@ -382,6 +384,8 @@ def validate_database(db: Database, taxonomy: Taxonomy | None = None, aspects: A
               AND a.category=d.category AND a.subcategory='other' AND a.sentiment=d.sentiment)""",
         "empty_game_names": "SELECT count(*) FROM games WHERE trim(name)=''",
         "null_review_text": "SELECT count(*) FROM reviews WHERE review_text IS NULL",
+        "null_store_review_text": "SELECT count(*) FROM store_reviews WHERE review_text IS NULL",
+        "invalid_store_rating": "SELECT count(*) FROM store_reviews WHERE rating NOT BETWEEN 1 AND 5",
         "invalid_confidence": "SELECT count(*) FROM review_enrichment WHERE confidence NOT BETWEEN 0 AND 1",
     }
     values = {}

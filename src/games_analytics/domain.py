@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -69,6 +69,42 @@ class ReviewPage(BaseModel):
     summary: ReviewSummary
     reviews: list[dict]
     cursor: str | None = None
+
+
+StorePlatform = Literal["google_play", "app_store"]
+
+
+class StoreProduct(BaseModel):
+    platform: StorePlatform
+    product_id: str
+    name: str
+    developer: str | None = None
+    description: str | None = None
+    url: str | None = None
+    metadata: dict[str, Any] = {}
+
+    @property
+    def product_key(self) -> str:
+        return f"{self.platform}:{self.product_id}"
+
+
+class StoreReview(BaseModel):
+    review_id: str
+    text: str
+    rating: int = Field(ge=1, le=5)
+    title: str | None = None
+    language: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    app_version: str | None = None
+    votes_up: int | None = None
+    developer_response: str | None = None
+    raw_payload: dict[str, Any] = {}
+
+
+class StoreReviewPage(BaseModel):
+    reviews: list[StoreReview]
+    next_cursor: str | None = None
 
 
 class Aspect(BaseModel):

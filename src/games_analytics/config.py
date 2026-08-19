@@ -7,10 +7,16 @@ from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
+def _default_database_path() -> Path:
+    current = Path("data/games_analytics.duckdb")
+    legacy = Path("data/steam_market.duckdb")
+    return legacy if legacy.exists() and not current.exists() else current
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    duckdb_path: Path = Path("data/steam_market.duckdb")
+    duckdb_path: Path = Field(default_factory=_default_database_path)
     analysis_jobs_path: Path = Path("data/analysis_jobs")
     min_reviews: int = Field(50, ge=0)
     steam_language: str = "all"
@@ -20,6 +26,7 @@ class Settings(BaseSettings):
     steamspy_enabled: bool = True
     steamspy_requests_per_second: float = Field(1.0, gt=0)
     steamspy_catalog_pages: int = Field(1, ge=1, le=100)
+    store_requests_per_second: float = Field(1.0, gt=0)
     llm_base_url: str = "http://127.0.0.1:8000/v1"
     llm_api_key: str = "local"
     openrouter_api_key: str = ""

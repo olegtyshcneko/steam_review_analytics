@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from steam_market.domain import Aspect, ReviewEnrichment, ReviewPage, ReviewSummary
-from steam_market.pipeline import Pipeline
+from games_analytics.domain import Aspect, ReviewEnrichment, ReviewPage, ReviewSummary
+from games_analytics.pipeline import Pipeline
 
 
 def review(rec_id: str):
@@ -150,8 +150,8 @@ async def test_invalid_batch_falls_back_per_review(settings, db):
 
 
 def test_durable_stats_include_prior_resumed_work(settings, db):
-    from steam_market.domain import Statement
-    from steam_market.pipeline import RunStats
+    from games_analytics.domain import Statement
+    from games_analytics.pipeline import RunStats
 
     db.upsert_catalog_game(10, "Game")
     db.upsert_reviews(10, [review("1"), review("2"), review("3")], lambda value: value)

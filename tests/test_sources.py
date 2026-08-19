@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+import json
+
 import httpx
 import pytest
 import respx
 
-from steam_market.sources import SourceError, SteamReviewSource, SteamSpySource, SteamStoreSource
+from games_analytics.platforms.base import SourceError
+from games_analytics.platforms.app_store import AppStoreSource
+from games_analytics.platforms.google_play import GooglePlaySource
+from games_analytics.platforms.steam import SteamReviewSource, SteamSpySource, SteamStoreSource
 
 
 @pytest.mark.asyncio
@@ -84,3 +89,56 @@ async def test_catalog_and_store_parsing():
         await spy.close(); await store.close()
     assert games[0].appid == 10
     assert metadata == {"type": "game", "name": "Game"}
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_google_play_product_and_review_parsing_omits_author_identity():
+    respx.get("https://play.google.com/store/apps/details").mock(return_value=httpx.Response(
+        200,
+        text='<meta property="og:title" content="Fixture Game - Apps on Google Play">'
+             '<meta property="og:description" content="A fixture game">',
+    ))
+    item = ["review-1", ["Private Name", "private-image"], 2, None,
+            "The game crashes every time I open the inventory screen.", [1_700_000_000], 7,
+            [None, "We are investigating.", [1_700_000_100]], None, None, "1.2.3"]
+    payload = [[item], ["next-token"], []]
+    envelope = [[None, None, json.dumps(payload)]]
+    respx.post("https://play.google.com/_/PlayStoreUi/data/batchexecute").mock(
+        return_value=httpx.Response(200, text=")]}'\n\n" + json.dumps(envelope)))
+    source = GooglePlaySource(10_000, 0)
+    try:
+        product = await source.get_product("com.example.game")
+        page = await source.get_reviews("com.example.game", count=1)
+    finally:
+        await source.close()
+    assert product.name == "Fixture Game"
+    assert page.next_cursor == "next-token"
+    assert page.reviews[0].rating == 2
+    assert "Private Name" not in json.dumps(page.reviews[0].raw_payload)
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_app_store_product_and_review_parsing_omits_author_identity():
+    respx.get("https://itunes.apple.com/lookup").mock(return_value=httpx.Response(200, json={
+        "resultCount": 1,
+        "results": [{"trackName": "Fixture Game", "sellerName": "Studio", "description": "Desc"}],
+    }))
+    respx.get("https://itunes.apple.com/us/rss/customerreviews/page=1/id=123/sortby=mostrecent/json").mock(
+        return_value=httpx.Response(200, json={"feed": {"entry": [{
+            "id": {"label": "review-1"}, "author": {"name": {"label": "Private Name"}},
+            "im:rating": {"label": "1"}, "title": {"label": "Broken"},
+            "content": {"label": "The game crashes every time I open the inventory screen."},
+            "im:version": {"label": "1.2.3"}, "updated": {"label": "2026-08-19T10:00:00Z"},
+            "im:voteCount": {"label": "2"},
+        }]}}))
+    source = AppStoreSource(10_000, 0)
+    try:
+        product = await source.get_product("123")
+        page = await source.get_reviews("123")
+    finally:
+        await source.close()
+    assert product.name == "Fixture Game"
+    assert page.reviews[0].rating == 1
+    assert "Private Name" not in json.dumps(page.reviews[0].raw_payload)

@@ -32,7 +32,7 @@ from scripts.benchmark_openrouter import (
     run_gemini_batch,
     save_json,
 )
-from steam_market.config import Settings
+from games_analytics.config import Settings
 
 
 GAMES = {

@@ -5,10 +5,11 @@ from pathlib import Path
 
 from mcp import Client
 
-from steam_market.analysis_jobs import AnalysisJobStore, analysis_contract
-from steam_market.database import Database
-from steam_market.mcp_server import mcp
-from steam_market.openrouter_batch import _parse_result, request_body
+from games_analytics.analysis_jobs import AnalysisJobStore, analysis_contract
+from games_analytics.database import Database
+from games_analytics.domain import StoreProduct, StoreReview
+from games_analytics.mcp_server import mcp
+from games_analytics.openrouter_batch import _parse_result, request_body
 
 
 def review(rec_id: str, text: str, voted_up: bool) -> dict:
@@ -95,11 +96,31 @@ def test_contract_marks_reviews_as_untrusted():
     assert "untrusted" in analysis_contract()["untrusted_content_rule"].lower()
 
 
+def test_mobile_store_job_uses_rating_polarity_and_shared_analysis_contract(tmp_path):
+    database_path = tmp_path / "mobile.duckdb"
+    database = Database(database_path)
+    database.initialize()
+    product = StoreProduct(platform="app_store", product_id="123", name="Mobile Fixture")
+    key = database.upsert_store_product(product)
+    database.upsert_store_reviews(key, [
+        StoreReview(review_id="n", rating=1, text="The promising progression stops early and needs several meaningful systems."),
+        StoreReview(review_id="p", rating=5, text="The progression loop feels polished, satisfying, and consistently enjoyable."),
+        StoreReview(review_id="m", rating=3, text="This neutral review is deliberately excluded from polarized sampling."),
+    ])
+    database.close()
+    store = AnalysisJobStore(tmp_path / "jobs", database_path)
+    created = store.create_store([key], "What is missing?", negative_limit_per_game=10, positive_limit_per_game=10)
+    batch = store.next_batch(created["job_id"], 10)
+    assert [item["source_voted_up"] for item in batch["reviews"]] == [False, True]
+    assert created["source"] == "store"
+
+
 async def test_mcp_exposes_public_workflow_tools():
     async with Client(mcp) as client:
         result = await client.list_tools()
     names = {tool.name for tool in result.tools}
-    assert {"create_analysis", "next_review_batch", "start_provider_batch", "save_analysis_report"} <= names
+    assert {"create_analysis", "create_store_analysis", "mine_store_game", "next_review_batch",
+            "start_provider_batch", "save_analysis_report"} <= names
     batch_tool = next(tool for tool in result.tools if tool.name == "start_provider_batch")
     assert "key" not in " ".join(batch_tool.input_schema["properties"]).lower()
 

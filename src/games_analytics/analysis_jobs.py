@@ -219,6 +219,7 @@ class AnalysisJobStore:
             "updated_at": now(),
             "status": "ready_for_harness" if mode == "harness" else "ready_for_batch",
             "mode": mode,
+            "source": "steam",
             "question": question.strip() or "What do players value, dislike, and want improved?",
             "appids": appids,
             "games": selection_by_game,
@@ -227,6 +228,122 @@ class AnalysisJobStore:
                 "negative_limit_per_game": negative_limit_per_game,
                 "positive_limit_per_game": positive_limit_per_game,
                 "policy": "negative reviews first, followed by a deterministic positive sample",
+            },
+            "review_ids": review_ids,
+            "review_meta": review_meta,
+            "selected_reviews": len(review_ids),
+            "review_characters": characters,
+            "estimated_input_tokens": round(characters / 4 + len(review_ids) * 100),
+            "estimated_output_tokens": len(review_ids) * 180,
+            "labels_completed": 0,
+            "provider": None,
+        }
+        self._write_json(job_dir / "manifest.json", manifest)
+        self._write_json(job_dir / "labels.json", {})
+        return self.public_status(job_id)
+
+    def create_store(
+        self,
+        product_keys: list[str],
+        question: str,
+        mode: Literal["harness", "provider_batch"] = "harness",
+        negative_limit_per_game: int = 5000,
+        positive_limit_per_game: int = 500,
+        seed: int = 42,
+    ) -> dict[str, Any]:
+        product_keys = list(dict.fromkeys(str(value).strip() for value in product_keys if str(value).strip()))
+        if not product_keys or len(product_keys) > 10:
+            raise AnalysisJobError("Choose between one and ten store product keys")
+        if not self.database_path.exists():
+            raise AnalysisJobError("The review database does not exist; mine at least one product first")
+        if not 0 <= negative_limit_per_game <= 20_000:
+            raise AnalysisJobError("negative_limit_per_game must be between 0 and 20000")
+        if not 0 <= positive_limit_per_game <= 5_000:
+            raise AnalysisJobError("positive_limit_per_game must be between 0 and 5000")
+
+        placeholders = ",".join("?" for _ in product_keys)
+        connection = duckdb.connect(str(self.database_path), read_only=True)
+        try:
+            name_rows = connection.execute(
+                f"SELECT product_key,name FROM store_products WHERE product_key IN ({placeholders})",
+                product_keys,
+            ).fetchall()
+            rows = connection.execute(
+                f"""SELECT review_key,product_key,review_text,source_voted_up,language,
+                            NULL::BIGINT playtime_at_review_minutes,votes_up
+                     FROM store_reviews WHERE product_key IN ({placeholders})""",
+                product_keys,
+            ).fetchall()
+        finally:
+            connection.close()
+
+        names = {str(key): str(name) for key, name in name_rows}
+        missing = [key for key in product_keys if key not in names]
+        if missing:
+            raise AnalysisJobError(f"Store products are not mined: {missing}")
+        columns = (
+            "recommendation_id", "appid", "review_text", "voted_up", "language",
+            "playtime_at_review_minutes", "votes_up",
+        )
+        all_rows = [dict(zip(columns, row, strict=True)) for row in rows]
+        selected: list[dict[str, Any]] = []
+        selection_by_game: dict[str, Any] = {}
+        for product_key in product_keys:
+            eligible = [
+                row for row in all_rows
+                if row["appid"] == product_key and informative(str(row["review_text"] or ""))
+            ]
+            negatives = sorted(
+                (row for row in eligible if row["voted_up"] is False),
+                key=lambda row: stable_rank(str(row["recommendation_id"]), seed),
+            )[:negative_limit_per_game]
+            positives = sorted(
+                (row for row in eligible if row["voted_up"] is True),
+                key=lambda row: stable_rank(str(row["recommendation_id"]), seed),
+            )[:positive_limit_per_game]
+            selected.extend(negatives)
+            selected.extend(positives)
+            selection_by_game[product_key] = {
+                "name": names[product_key],
+                "eligible_negative": sum(row["voted_up"] is False for row in eligible),
+                "eligible_positive": sum(row["voted_up"] is True for row in eligible),
+                "selected_negative": len(negatives),
+                "selected_positive": len(positives),
+            }
+        if not selected:
+            raise AnalysisJobError("No informative positive or negative reviews matched the products")
+
+        job_id = str(uuid.uuid4())
+        job_dir = self._job_dir(job_id)
+        job_dir.mkdir(parents=True)
+        review_ids = [str(row["recommendation_id"]) for row in selected]
+        review_meta = {
+            str(row["recommendation_id"]): {
+                "appid": str(row["appid"]),
+                "voted_up": bool(row["voted_up"]),
+                "language": row["language"] or "unknown",
+                "playtime_at_review_minutes": None,
+                "votes_up": int(row["votes_up"] or 0),
+            }
+            for row in selected
+        }
+        characters = sum(len(str(row["review_text"] or "")) for row in selected)
+        manifest = {
+            "job_id": job_id,
+            "created_at": now(),
+            "updated_at": now(),
+            "status": "ready_for_harness" if mode == "harness" else "ready_for_batch",
+            "mode": mode,
+            "source": "store",
+            "question": question.strip() or "What do players value, dislike, and want improved?",
+            "appids": product_keys,
+            "product_keys": product_keys,
+            "games": selection_by_game,
+            "selection": {
+                "seed": seed,
+                "negative_limit_per_game": negative_limit_per_game,
+                "positive_limit_per_game": positive_limit_per_game,
+                "policy": "1-2 star reviews first, followed by a deterministic 4-5 star sample; 3-star reviews excluded",
             },
             "review_ids": review_ids,
             "review_meta": review_meta,
@@ -264,11 +381,18 @@ class AnalysisJobStore:
         placeholders = ",".join("?" for _ in chosen)
         connection = duckdb.connect(str(self.database_path), read_only=True)
         try:
-            rows = connection.execute(
-                f"SELECT recommendation_id,review_text,voted_up,language FROM reviews "
-                f"WHERE recommendation_id IN ({placeholders})",
-                chosen,
-            ).fetchall()
+            if manifest.get("source") == "store":
+                rows = connection.execute(
+                    f"SELECT review_key,review_text,source_voted_up,language FROM store_reviews "
+                    f"WHERE review_key IN ({placeholders})",
+                    chosen,
+                ).fetchall()
+            else:
+                rows = connection.execute(
+                    f"SELECT recommendation_id,review_text,voted_up,language FROM reviews "
+                    f"WHERE recommendation_id IN ({placeholders})",
+                    chosen,
+                ).fetchall()
         finally:
             connection.close()
         by_id = {
@@ -486,8 +610,9 @@ def render_html(narrative: AnalysisNarrative, aggregate: dict[str, Any]) -> str:
     )
     game_sections = []
     for appid, game in aggregate["games"].items():
+        source_label = "Store product" if ":" in appid else "Steam app"
         game_sections.append(
-            "<article class='game'><div><p class='eyebrow'>Steam app " + html.escape(appid) + "</p><h3>"
+            "<article class='game'><div><p class='eyebrow'>" + source_label + " " + html.escape(appid) + "</p><h3>"
             + html.escape(game["name"]) + "</h3><p class='muted'>"
             + f"{game['selected_negative']} negative · {game['selected_positive']} positive reviews</p></div>"
             + "<div><h4>Leading complaints</h4>" + _bar_rows(game["complaints"], "of negative sample") + "</div>"
@@ -512,7 +637,7 @@ h1{{font-size:clamp(42px,7vw,82px);max-width:960px;margin:.2em 0}}h2{{font-size:
 .pitch{{font-size:19px}}footer{{margin-top:80px;padding-top:24px;border-top:1px solid #cfc5b4;color:var(--muted)}}
 @media(max-width:800px){{.summary ol{{columns:1}}.game{{grid-template-columns:1fr}}.ideas{{grid-template-columns:1fr}}.idea:first-child{{grid-column:auto}}}}
 </style></head><body><main>
-<p class="eyebrow">Steam Review Intelligence</p><h1>{html.escape(narrative.title)}</h1>
+<p class="eyebrow">Games Analytics</p><h1>{html.escape(narrative.title)}</h1>
 <p class="lead">{html.escape(narrative.executive_summary)}</p>
 <section class="summary"><p class="eyebrow">Executive conclusions</p><ol>{conclusions}</ol></section>
 <h2>What players are telling us</h2>{findings}

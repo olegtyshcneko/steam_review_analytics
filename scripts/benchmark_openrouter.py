@@ -26,10 +26,10 @@ import duckdb
 import httpx
 from pydantic import BaseModel, Field, ValidationError
 
-from steam_market.config import Settings
-from steam_market.domain import ReviewEnrichmentItem, enrichment_eligibility
-from steam_market.llm import _extract_json
-from steam_market.taxonomy import AspectTaxonomy
+from games_analytics.config import Settings
+from games_analytics.domain import ReviewEnrichmentItem, enrichment_eligibility
+from games_analytics.llm import _extract_json
+from games_analytics.taxonomy import AspectTaxonomy
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -90,8 +90,8 @@ def headers() -> dict[str, str]:
     return {
         "Authorization": f"Bearer {api_key()}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://github.com/olegtyshcneko/steam_review_analytics",
-        "X-OpenRouter-Title": "steam-review-analytics benchmark",
+        "HTTP-Referer": "https://github.com/olegtyshcneko/games_analytics",
+        "X-OpenRouter-Title": "games-analytics benchmark",
     }
 
 

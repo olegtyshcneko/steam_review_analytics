@@ -1,7 +1,7 @@
 [project]
-name = "steam-review-analytics"
-version = "0.1.0"
-description = "Local-first Steam review market dataset builder"
+name = "games-analytics"
+version = "0.2.0"
+description = "Local-first cross-platform game review analytics"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -16,9 +16,12 @@ dependencies = [
 ]
 
 [project.scripts]
-steam-market = "steam_market.cli:app"
-steam-review-mcp = "steam_market.mcp_server:main"
-steam-review-batch-worker = "steam_market.batch_worker:main"
+games-analytics = "games_analytics.cli:app"
+games-analytics-mcp = "games_analytics.mcp_server:main"
+games-analytics-batch-worker = "games_analytics.batch_worker:main"
+steam-market = "games_analytics.cli:app"
+steam-review-mcp = "games_analytics.mcp_server:main"
+steam-review-batch-worker = "games_analytics.batch_worker:main"
 
 [dependency-groups]
 dev = ["pytest>=8.4.0", "pytest-asyncio>=1.1.0", "respx>=0.22.0"]
@@ -33,9 +36,9 @@ asyncio_mode = "auto"
 pythonpath = ["."]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/steam_market"]
+packages = ["src/games_analytics", "src/steam_market"]
 
 [tool.hatch.build.targets.wheel.force-include]
-"prompts" = "steam_market/resources/prompts"
-"taxonomy" = "steam_market/resources/taxonomy"
-"contracts" = "steam_market/resources/contracts"
+"prompts" = "games_analytics/resources/prompts"
+"taxonomy" = "games_analytics/resources/taxonomy"
+"contracts" = "games_analytics/resources/contracts"

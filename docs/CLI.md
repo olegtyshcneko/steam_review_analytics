@@ -1,27 +1,54 @@
-# Steam Market CLI and Local Models
+# Games Analytics CLI and Local Models
 
-The `steam-market` CLI builds and inspects the underlying Steam review dataset.
-It is an advanced workflow separate from the public MCP plugin. The MCP supports
-agent harness and OpenRouter provider-batch execution; direct local-model support
-belongs to this CLI pipeline.
+The `games-analytics` CLI builds and inspects Steam, Google Play, and Apple App
+Store review datasets. Steam catalog discovery and local-model enrichment remain
+the advanced pipeline; mobile collectors currently feed the shared structured
+MCP analysis workflow.
 
 ## Prerequisites and installation
 
 - Python 3.12 or newer
 - [uv](https://docs.astral.sh/uv/)
-- Internet access to Steam Store and SteamSpy
+- Internet access to the selected public storefronts
 - Optionally, an OpenAI-compatible server for classification and enrichment
 
 ```bash
 uv sync
 cp .env.example .env
 # Replace STEAMID_HASH_SALT with a long random local value; never commit .env.
-uv run steam-market init
-uv run steam-market doctor
+uv run games-analytics init
+uv run games-analytics doctor
 ```
 
-The database defaults to `data/steam_market.duckdb`. DuckDB is canonical and no
-application server is needed.
+The database defaults to `data/games_analytics.duckdb`. If the old
+`data/steam_market.duckdb` exists and the new file does not, the application uses
+the legacy file automatically. An explicit `DUCKDB_PATH` always wins.
+
+## Mobile storefront mining
+
+No developer credential is required for bounded public storefront mining:
+
+```bash
+uv run games-analytics mine-store \
+  --platform google-play \
+  --product-id com.pabloleban.IdleSlayer \
+  --country us --language en --max-reviews 500
+
+uv run games-analytics mine-store \
+  --platform app-store \
+  --product-id 1526599527 \
+  --country us --max-reviews 500
+```
+
+Google Play uses continuation-token pagination. Apple review feeds are scoped to
+a country storefront and expose pages 1 through 10, normally up to about 500
+currently visible reviews per country. These public transports are best-effort
+and can change upstream; use conservative `STORE_REQUESTS_PER_SECOND` settings.
+
+Mobile ratings map to analysis polarity as follows: 1–2 stars are negative,
+3 stars are neutral and excluded from the default polarized sample, and 4–5
+stars are positive. The database retains review text and useful product metadata
+but not reviewer names or profile images.
 
 ## Local OpenAI-compatible model setup
 
@@ -55,7 +82,7 @@ returned by `/v1/models` must exactly match `LLM_MODEL`.
 
 ```bash
 curl http://127.0.0.1:8000/v1/models
-uv run steam-market test-llm
+uv run games-analytics test-llm
 ```
 
 `test-llm` checks both structured tasks before a real crawl. The application
@@ -69,6 +96,7 @@ All settings use environment variables and can live in `.env`. See
 - `DUCKDB_PATH`, `MIN_REVIEWS`
 - source-specific request rates and bounded retry count
 - `STEAMSPY_CATALOG_PAGES` (one 1,000-entry broad page by default)
+- `STORE_REQUESTS_PER_SECOND` for Google Play and Apple storefront collectors
 - `LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL`
 - local-model timeout, temperature, batch size, and concurrency
 - `LLM_REASONING_EFFORT=none` for deterministic extraction
@@ -92,7 +120,7 @@ for type filtering and review totals.
 Start the local model, then run:
 
 ```bash
-uv run steam-market dry-run --games 5 --min-reviews 50 --seed 42
+uv run games-analytics dry-run --games 5 --min-reviews 50 --seed 42
 ```
 
 Candidates are shuffled from the configured catalog snapshot using the seed.
@@ -105,16 +133,17 @@ crawl, while stable recommendation IDs prevent duplicate review records.
 ## Commands
 
 ```bash
-uv run steam-market discover
-uv run steam-market qualify --min-reviews 50 --limit 100
-uv run steam-market ingest --appid 413150
-uv run steam-market classify-games --min-reviews 50 --limit 10
-uv run steam-market enrich-reviews --appid 413150
-uv run steam-market run --min-reviews 50 --limit-games 5
-uv run steam-market status
-uv run steam-market validate
-uv run steam-market db-info
-uv run steam-market export-parquet
+uv run games-analytics discover
+uv run games-analytics qualify --min-reviews 50 --limit 100
+uv run games-analytics ingest --appid 413150
+uv run games-analytics classify-games --min-reviews 50 --limit 10
+uv run games-analytics enrich-reviews --appid 413150
+uv run games-analytics run --min-reviews 50 --limit-games 5
+uv run games-analytics status
+uv run games-analytics validate
+uv run games-analytics db-info
+uv run games-analytics export-parquet
+uv run games-analytics mine-store --platform google-play --product-id com.example.game --max-reviews 500
 ```
 
 Omit `--limit-games` to process the complete configured catalog snapshot, or use
@@ -127,7 +156,7 @@ bounded repeatable batches. Pipeline options include `--skip-llm`,
 Run a read-only query through the CLI:
 
 ```bash
-uv run steam-market sql "SELECT appid,name,total_reviews,primary_genre FROM game_market_data ORDER BY total_reviews DESC LIMIT 20"
+uv run games-analytics sql "SELECT appid,name,total_reviews,primary_genre FROM game_market_data ORDER BY total_reviews DESC LIMIT 20"
 ```
 
 Or query DuckDB directly:
@@ -135,17 +164,29 @@ Or query DuckDB directly:
 ```python
 import duckdb
 
-con = duckdb.connect("data/steam_market.duckdb")
+con = duckdb.connect("data/games_analytics.duckdb")
 print(con.sql("SELECT count(*) FROM reviews").fetchone())
 ```
 
-Useful views include `latest_game_classification`,
+Useful views include `cross_platform_reviews`, `latest_game_classification`,
 `latest_review_enrichment`, `qualified_games`, `game_market_data`, and
 `review_analysis`.
 
 Example analytical queries:
 
 ```sql
+-- Review volume and rating spread across mobile products
+SELECT p.platform,p.name,count(*) AS reviews,
+       avg(r.rating) AS average_rating,
+       sum(r.source_voted_up=false) AS negative
+FROM store_products p JOIN store_reviews r USING(product_key)
+GROUP BY 1,2 ORDER BY reviews DESC;
+
+-- One normalized stream spanning Steam and mobile storefronts
+SELECT platform,product_key,count(*) AS reviews,
+       sum(source_voted_up=false) AS negative
+FROM cross_platform_reviews GROUP BY 1,2 ORDER BY reviews DESC;
+
 -- Top negative aspects by market genre
 SELECT c.primary_genre, a.subcategory, count(*) AS mentions
 FROM review_aspects a
@@ -177,10 +218,11 @@ ORDER BY r.playtime_at_review_minutes DESC;
 Stop the active writer before copying the DuckDB file, or export primary tables:
 
 ```bash
-uv run steam-market export-parquet --directory data/export
+uv run games-analytics export-parquet --directory data/export
 ```
 
-This writes `games.parquet`, `reviews.parquet`, and `review_aspects.parquet`.
+This writes `games.parquet`, `reviews.parquet`, `store_products.parquet`,
+`store_reviews.parquet`, and `review_aspects.parquet`.
 
 ## Troubleshooting
 
