@@ -6,6 +6,7 @@ from pathlib import Path
 from mcp import Client
 
 from games_analytics.analysis_jobs import AnalysisJobStore, analysis_contract
+from games_analytics.batch_worker import selected_rows
 from games_analytics.database import Database
 from games_analytics.domain import StoreProduct, StoreReview
 from games_analytics.mcp_server import mcp
@@ -113,6 +114,8 @@ def test_mobile_store_job_uses_rating_polarity_and_shared_analysis_contract(tmp_
     batch = store.next_batch(created["job_id"], 10)
     assert [item["source_voted_up"] for item in batch["reviews"]] == [False, True]
     assert created["source"] == "store"
+    provider_rows = selected_rows(store, created["job_id"], store.manifest(created["job_id"])["review_ids"])
+    assert [row[2] for row in provider_rows] == [False, True]
 
 
 async def test_mcp_exposes_public_workflow_tools():

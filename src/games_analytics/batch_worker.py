@@ -23,11 +23,18 @@ def selected_rows(
     placeholders = ",".join("?" for _ in recommendation_ids)
     connection = duckdb.connect(str(store.database_path), read_only=True)
     try:
-        rows = connection.execute(
-            f"SELECT recommendation_id,review_text,voted_up FROM reviews "
-            f"WHERE recommendation_id IN ({placeholders})",
-            recommendation_ids,
-        ).fetchall()
+        if store.manifest(job_id).get("source") == "store":
+            rows = connection.execute(
+                f"SELECT review_key,review_text,source_voted_up FROM store_reviews "
+                f"WHERE review_key IN ({placeholders})",
+                recommendation_ids,
+            ).fetchall()
+        else:
+            rows = connection.execute(
+                f"SELECT recommendation_id,review_text,voted_up FROM reviews "
+                f"WHERE recommendation_id IN ({placeholders})",
+                recommendation_ids,
+            ).fetchall()
     finally:
         connection.close()
     by_id = {str(recommendation_id): (str(recommendation_id), text, voted_up)
